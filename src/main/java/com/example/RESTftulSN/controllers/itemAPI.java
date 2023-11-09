@@ -36,7 +36,7 @@ public class itemAPI {
         return new ResponseEntity<>(itemList, HttpStatus.OK);
     }
     @GetMapping("{id}")
-    public ResponseEntity<ItemDTO> getUser(@PathVariable("id") int id){
+    public ResponseEntity<ItemDTO> getUser(@PathVariable("id") Long id){
         return new ResponseEntity<>(itemService.getById(id).toDto(),HttpStatus.OK);
     }
     @PostMapping("/add")
@@ -47,12 +47,12 @@ public class itemAPI {
         return new HttpEntity<>(HttpStatus.OK);
     }
     @DeleteMapping("/delete/{id}")
-    public HttpEntity<HttpStatus> deleteUser(@PathVariable("id") int id){
+    public HttpEntity<HttpStatus> deleteUser(@PathVariable("id") Long id){
         itemService.deleteById(id);
         return new HttpEntity<>(HttpStatus.OK);
     }
     @PatchMapping("/update/{id}")
-    public HttpEntity<HttpStatus> updateUser(@PathVariable("id") int id
+    public HttpEntity<HttpStatus> updateUser(@PathVariable("id") Long id
             ,@RequestBody @Valid ItemDTO itemDTO
             ,BindingResult bindingResult){
         bindingResultErrorCheck.check(bindingResult);

@@ -41,11 +41,11 @@ public class ItemService {
         return item;
     }
 
-    public void deleteById(int id) {
+    public void deleteById(Long id) {
         Item item = getById(id);
         itemRepository.delete(item);
     }
-    public Item getById(int id) {
+    public Item getById(Long id) {
         Optional<Item> item = itemRepository.findById(id);
         if(item.isEmpty()){
             throw new InvalidDataException("There's no item with such id");
@@ -53,7 +53,7 @@ public class ItemService {
         return item.get();
     }
 
-    public void updateUserById(int id, ItemDTO itemDTO) {
+    public void updateUserById(Long id, ItemDTO itemDTO) {
         Item item = getById(id);
         if(!itemDTO.getSeller_id().equals(item.getSeller().getId())){
             throw new InvalidDataException("You cant change seller");

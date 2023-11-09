@@ -3,6 +3,7 @@ package com.example.RESTftulSN.services;
 import com.example.RESTftulSN.DTO.UserDTO;
 import com.example.RESTftulSN.DTO.UsersDTOForRegister;
 import com.example.RESTftulSN.enums.USER_ROLE;
+import com.example.RESTftulSN.models.Item;
 import com.example.RESTftulSN.models.Users;
 import com.example.RESTftulSN.repositories.UsersRepository;
 import com.example.RESTftulSN.util.InvalidDataException;
@@ -84,5 +85,10 @@ public class UserService{
            throw new InvalidDataException("There's no user with such id");
        }
        return user.get();
+    }
+
+    public void addItemToCart(Users users, Item item) {
+        users.setCart(item);
+        usersRepository.save(users);
     }
 }

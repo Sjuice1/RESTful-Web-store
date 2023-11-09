@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import org.modelmapper.ModelMapper;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "Item")
@@ -28,7 +29,8 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "seller_id",referencedColumnName = "id")
     private Users seller;
-
+    @ManyToMany(mappedBy = "cart")
+    private List<Users> cart;
     public Item() {
     }
 
@@ -86,6 +88,14 @@ public class Item {
 
     public void setSeller(Users seller) {
         this.seller = seller;
+    }
+
+    public List<Users> getCart() {
+        return cart;
+    }
+
+    public void setCart(List<Users> cart) {
+        this.cart = cart;
     }
 
     public ItemDTO toDto() {

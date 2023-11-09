@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import org.modelmapper.ModelMapper;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -28,6 +29,13 @@ public class Users {
     private USER_ROLE userRole;
     @OneToMany(mappedBy = "seller")
     private List<Item> items;
+    @ManyToMany
+    @JoinTable(
+           name = "cart",
+            joinColumns = @JoinColumn(name = "item_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<Item> cart;
     public Users() {
     }
 
@@ -86,6 +94,19 @@ public class Users {
     public void setItems(List<Item> items) {
         this.items = items;
     }
+
+    public List<Item> getCart() {
+        return cart;
+    }
+
+    public void setCart(Item item) {
+        if(this.cart==null){
+            cart=new ArrayList<>(List.of(item));
+            return;
+        }
+        this.cart.add(item);
+    }
+
     public UserDTO toDto(){
         return new ModelMapper().map(this,UserDTO.class);
     }
