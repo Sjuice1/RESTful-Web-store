@@ -2,6 +2,7 @@ package com.example.RESTftulSN.models;
 
 import com.example.RESTftulSN.DTO.ItemDTO;
 import com.example.RESTftulSN.enums.STATE_OF_ITEM;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.modelmapper.ModelMapper;
 
@@ -29,8 +30,9 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "seller_id",referencedColumnName = "id")
     private Users seller;
+
     @ManyToMany(mappedBy = "cart")
-    private List<Users> cart;
+    private List<Users> usersWithItem;
     public Item() {
     }
 
@@ -91,11 +93,11 @@ public class Item {
     }
 
     public List<Users> getCart() {
-        return cart;
+        return usersWithItem;
     }
 
     public void setCart(List<Users> cart) {
-        this.cart = cart;
+        this.usersWithItem = cart;
     }
 
     public ItemDTO toDto() {

@@ -88,7 +88,18 @@ public class UserService{
     }
 
     public void addItemToCart(Users users, Item item) {
+        if(users.getCart().contains(item)){
+            throw new InvalidDataException("Item already in cart");
+        }
         users.setCart(item);
+        usersRepository.save(users);
+    }
+
+    public void removeItemFromCart(Users users, Item item) {
+        if(!users.getCart().contains(item)){
+            throw new InvalidDataException("No item in cart");
+        }
+        users.getCart().remove(item);
         usersRepository.save(users);
     }
 }

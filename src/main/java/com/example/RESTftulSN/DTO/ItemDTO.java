@@ -21,6 +21,14 @@ public class ItemDTO {
     @NotNull
     private Long seller_id;
 
+    public ItemDTO(String name, String description, Double price, STATE_OF_ITEM stateOfItem, Long seller_id) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.stateOfItem = stateOfItem;
+        this.seller_id = seller_id;
+    }
+
     public ItemDTO() {
     }
 

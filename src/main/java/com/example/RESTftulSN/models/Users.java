@@ -32,8 +32,8 @@ public class Users {
     @ManyToMany
     @JoinTable(
            name = "cart",
-            joinColumns = @JoinColumn(name = "item_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "item_id")
     )
     private List<Item> cart;
     public Users() {
