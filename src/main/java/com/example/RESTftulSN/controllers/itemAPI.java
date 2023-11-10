@@ -2,7 +2,6 @@ package com.example.RESTftulSN.controllers;
 
 import com.example.RESTftulSN.DTO.ItemDTO;
 import com.example.RESTftulSN.DTO.ReviewDTO;
-import com.example.RESTftulSN.DTO.UserDTO;
 import com.example.RESTftulSN.models.Item;
 import com.example.RESTftulSN.services.ItemService;
 import com.example.RESTftulSN.security.BindingResultErrorCheck;

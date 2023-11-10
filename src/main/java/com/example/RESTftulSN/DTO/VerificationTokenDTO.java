@@ -1,6 +1,5 @@
 package com.example.RESTftulSN.DTO;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public class VerificationTokenDTO {

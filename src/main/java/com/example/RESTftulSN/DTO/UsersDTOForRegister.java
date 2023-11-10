@@ -1,6 +1,5 @@
 package com.example.RESTftulSN.DTO;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.*;
 
 public class UsersDTOForRegister {

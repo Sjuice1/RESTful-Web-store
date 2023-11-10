@@ -7,12 +7,14 @@ import com.example.RESTftulSN.repositories.OrderRepository;
 import com.example.RESTftulSN.util.InvalidDataException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 /// TODO transaction
 @Service
+@Transactional(readOnly = true)
 public class OrderService {
     private final UserService userService;
     private final OrderRepository orderRepository;
@@ -22,25 +24,18 @@ public class OrderService {
         this.userService = userService;
         this.orderRepository = orderRepository;
     }
-    public Order getOrderById(Long id){
-        Optional<Order> order = orderRepository.findById(id);
-        if(order.isEmpty()){
-            throw new InvalidDataException("There's no order with that id");
-        }
-        return order.get();
-    }
-
-
+    @Transactional
     public void changeStatus(Long id, SHIPPING_STATUS shippingStatus) {
         Order order = getOrderById(id);
         order.setStatus(shippingStatus);
         orderRepository.save(order);
     }
-
+    @Transactional
     public void deleteById(Long id) {
         Order order = getOrderById(id);
         orderRepository.delete(order);
     }
+    @Transactional
     public Order orderACart(Users user) {
         if(user.getCart().isEmpty()){
             throw new InvalidDataException("Cart is empty");
@@ -54,5 +49,12 @@ public class OrderService {
         orderRepository.save(order);
         userService.saveUser(user);
         return order;
+    }
+    public Order getOrderById(Long id){
+        Optional<Order> order = orderRepository.findById(id);
+        if(order.isEmpty()){
+            throw new InvalidDataException("There's no order with that id");
+        }
+        return order.get();
     }
 }

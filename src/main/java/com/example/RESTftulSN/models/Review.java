@@ -1,7 +1,6 @@
 package com.example.RESTftulSN.models;
 
 import com.example.RESTftulSN.DTO.ReviewDTO;
-import com.example.RESTftulSN.DTO.UserDTO;
 import jakarta.persistence.*;
 import org.modelmapper.ModelMapper;
 

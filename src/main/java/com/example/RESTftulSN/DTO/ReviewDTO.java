@@ -1,12 +1,9 @@
 package com.example.RESTftulSN.DTO;
 
-import com.example.RESTftulSN.models.Review;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.modelmapper.ModelMapper;
 
 public class ReviewDTO {
 
