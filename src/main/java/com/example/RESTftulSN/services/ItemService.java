@@ -2,7 +2,6 @@ package com.example.RESTftulSN.services;
 
 import com.example.RESTftulSN.DTO.ItemDTO;
 import com.example.RESTftulSN.models.Item;
-import com.example.RESTftulSN.models.Users;
 import com.example.RESTftulSN.repositories.ItemRepository;
 import com.example.RESTftulSN.util.InvalidDataException;
 import org.modelmapper.ModelMapper;
@@ -47,7 +46,7 @@ public class ItemService {
 
     public void updateUserById(Long id, ItemDTO itemDTO) {
         Item item = getById(id);
-        if(!itemDTO.getSeller_id().equals(item.getSeller().getId())){
+        if(!itemDTO.getSellerId().equals(item.getSeller().getId())){
             throw new InvalidDataException("You cant change seller");
         }
         item.setName(itemDTO.getName());
@@ -60,7 +59,7 @@ public class ItemService {
         ModelMapper modelMapper = new ModelMapper();
         Item item = modelMapper.map(itemDTO,Item.class);
         item.setPublicationTime(LocalDateTime.now());
-        item.setSeller(userService.getById(itemDTO.getSeller_id()));
+        item.setSeller(userService.getById(itemDTO.getSellerId()));
         return item;
     }
 }

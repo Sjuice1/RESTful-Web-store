@@ -4,26 +4,26 @@ import jakarta.validation.constraints.NotNull;
 
 public class CartDTO {
     @NotNull
-    private Long user_id;
+    private Long userId;
     @NotNull
-    private Long item_id;
+    private Long itemId;
 
     public CartDTO() {
     }
 
-    public Long getUser_id() {
-        return user_id;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUser_id(Long user_id) {
-        this.user_id = user_id;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
-    public Long getItem_id() {
-        return item_id;
+    public Long getItemId() {
+        return itemId;
     }
 
-    public void setItem_id(Long item_id) {
-        this.item_id = item_id;
+    public void setItemId(Long itemId) {
+        this.itemId = itemId;
     }
 }

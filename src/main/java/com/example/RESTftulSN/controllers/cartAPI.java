@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/cart")
@@ -39,8 +38,9 @@ public class cartAPI {
         Users user = userService.getById(id);
         List<ItemDTO> list = user.getItems().stream().
                 map(item -> new ItemDTO(item.getName(),item.getDescription()
-                        ,item.getPrice(),item.getStateOfItem()
-                        ,item.getImg_source()
+                        ,item.getPrice(),item.getStateOfItem(),
+                         item.getItemCount()
+                        ,item.getImgSource()
                         ,item.getSeller().getId())).toList();
         return new ResponseEntity<>(list,HttpStatus.OK);
     }
@@ -49,15 +49,15 @@ public class cartAPI {
     public HttpEntity<HttpStatus> putItemOnCart(@RequestBody @Valid CartDTO cartDTO
             ,BindingResult bindingResult){
         bindingResultErrorCheck.check(bindingResult);
-        Users users = userService.getById(cartDTO.getUser_id());
-        Item item = itemService.getById(cartDTO.getItem_id());
+        Users users = userService.getById(cartDTO.getUserId());
+        Item item = itemService.getById(cartDTO.getItemId());
         userService.addItemToCart(users,item);
         return new HttpEntity<>(HttpStatus.OK);
     }
     @DeleteMapping("/remove")
     private HttpEntity<HttpStatus> removeItemFromCart(@RequestBody @Valid CartDTO cartDTO){
-        Users users = userService.getById(cartDTO.getUser_id());
-        Item item = itemService.getById(cartDTO.getItem_id());
+        Users users = userService.getById(cartDTO.getUserId());
+        Item item = itemService.getById(cartDTO.getItemId());
         userService.removeItemFromCart(users,item);
         return new HttpEntity<>(HttpStatus.OK);
     }

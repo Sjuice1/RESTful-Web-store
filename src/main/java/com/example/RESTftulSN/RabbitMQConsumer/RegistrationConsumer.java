@@ -27,5 +27,9 @@ public class RegistrationConsumer {
         VerificationTokenDTO verificationTokenDTO = new VerificationTokenDTO(tokenGeneration
                 ,LocalDateTime.now().plusMinutes(5));
         verificationTokenService.createToken(verificationTokenDTO,user);
+        ////////////////////////////////////
+        ///////SOME API FOR EMAIL SENDING
+        ///////SEND JSON WITH USER.getEmail()
+        ///////////////////////////////////
     }
 }

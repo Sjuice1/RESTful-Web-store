@@ -39,17 +39,12 @@ public class reviewAPI {
         return new HttpEntity<>(HttpStatus.OK);
     }
     @DeleteMapping("/delete/{id}")
-    public HttpEntity<HttpStatus> deleteItem(@PathVariable("id") Long id){
+    public HttpEntity<HttpStatus> deleteReview(@PathVariable("id") Long id){
         reviewService.deleteById(id);
         return new HttpEntity<>(HttpStatus.OK);
     }
 
 
-    ///////////////////////////////////////////
-    ///////////////////////////////////////////
-    /////// NO UPDATE FOR REVIEW,YOU CAN DELETE OR CREATE NEW ON TOP OF PREVIOUS
-    ///////////////////////////////////////////
-    ///////////////////////////////////////////
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponseEntity> invalidDataHandler(InvalidDataException invalidDataException){

@@ -2,9 +2,12 @@ package com.example.RESTftulSN.services;
 
 import com.example.RESTftulSN.DTO.UserDTO;
 import com.example.RESTftulSN.DTO.UsersDTOForRegister;
+import com.example.RESTftulSN.enums.SHIPPING_STATUS;
 import com.example.RESTftulSN.enums.USER_ROLE;
 import com.example.RESTftulSN.models.Item;
+import com.example.RESTftulSN.models.Order;
 import com.example.RESTftulSN.models.Users;
+import com.example.RESTftulSN.repositories.OrderRepository;
 import com.example.RESTftulSN.repositories.UsersRepository;
 import com.example.RESTftulSN.util.InvalidDataException;
 import org.modelmapper.ModelMapper;
@@ -20,11 +23,13 @@ import java.util.stream.Collectors;
 @Service
 public class UserService{
     private final UsersRepository usersRepository;
+    private final OrderRepository orderRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UsersRepository usersRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UsersRepository usersRepository, OrderRepository orderRepository, PasswordEncoder passwordEncoder) {
         this.usersRepository = usersRepository;
+        this.orderRepository = orderRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -90,8 +95,8 @@ public class UserService{
     }
 
     public void addItemToCart(Users users, Item item) {
-        if(users.getCart().contains(item)){
-            throw new InvalidDataException("Item already in cart");
+        if(users.getCart().stream().filter(cartItem -> cartItem.equals(item)).count() > item.getItemCount()){
+            throw  new InvalidDataException("You can't put that much items in cart");
         }
         users.setCart(item);
         usersRepository.save(users);
@@ -103,5 +108,19 @@ public class UserService{
         }
         users.getCart().remove(item);
         usersRepository.save(users);
+    }
+
+    public void orderACart(Users user) {
+        if(user.getCart().isEmpty()){
+            throw new InvalidDataException("Cart is empty");
+        }
+        Order order = new Order();
+        order.setOrderDate(LocalDateTime.now());
+        order.setStatus(SHIPPING_STATUS.PROCESSED);
+        order.setUser(user);
+        user.getCart().stream().forEach(order::setItems);
+        user.getCart().clear();
+        orderRepository.save(order);
+        usersRepository.save(user);
     }
 }

@@ -18,18 +18,30 @@ public class ItemDTO {
     private Double price;
     @NotNull(message = "Invalid state of item")
     private STATE_OF_ITEM stateOfItem;
+    @Min(value = 0,message = "Item count can't be below 0")
+    @Max(value = 1000000,message = "Items count must be less than 1000000")
+    private Long itemCount;
     @Size(max = 200,message = "IMG source too large")
-    private String img_source;
+    private String imgSource;
     @NotNull(message = "Seller id must be written")
-    private Long seller_id;
+    private Long sellerId;
 
-    public ItemDTO(String name, String description, Double price, STATE_OF_ITEM stateOfItem, String img_source,Long seller_id) {
+    public ItemDTO(String name, String description, Double price, STATE_OF_ITEM stateOfItem, Long itemCount, String img_source, Long sellerId) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.stateOfItem = stateOfItem;
-        this.seller_id = seller_id;
-        this.img_source = img_source;
+        this.itemCount = itemCount;
+        this.imgSource = img_source;
+        this.sellerId = sellerId;
+    }
+
+    public Long getItemCount() {
+        return itemCount;
+    }
+
+    public void setItemCount(Long itemCount) {
+        this.itemCount = itemCount;
     }
 
     public ItemDTO() {
@@ -67,20 +79,20 @@ public class ItemDTO {
         this.stateOfItem = stateOfItem;
     }
 
-    public String getImg_source() {
-        return img_source;
+    public String getImgSource() {
+        return imgSource;
     }
 
-    public void setImg_source(String img_source) {
-        this.img_source = img_source;
+    public void setImgSource(String imgSource) {
+        this.imgSource = imgSource;
     }
 
-    public Long getSeller_id() {
-        return seller_id;
+    public Long getSellerId() {
+        return sellerId;
     }
 
-    public void setSeller_id(Long seller_id) {
-        this.seller_id = seller_id;
+    public void setSellerId(Long sellerId) {
+        this.sellerId = sellerId;
     }
 
 }

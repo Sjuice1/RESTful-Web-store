@@ -2,7 +2,6 @@ package com.example.RESTftulSN.models;
 
 import com.example.RESTftulSN.DTO.ItemDTO;
 import com.example.RESTftulSN.enums.STATE_OF_ITEM;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.modelmapper.ModelMapper;
 
@@ -28,15 +27,19 @@ public class Item {
     @Enumerated(EnumType.STRING)
     private STATE_OF_ITEM stateOfItem;
     @Column(name = "img_source")
-    private String img_source;
+    private String imgSource;
+    @Column(name = "item_count")
+    private Long itemCount;
     @ManyToOne
     @JoinColumn(name = "seller_id",referencedColumnName = "id")
     private Users seller;
     @ManyToMany(mappedBy = "cart")
-    private List<Users> usersWithItem;
+    private List<Users> usersWithItemInCart;
 
     @OneToMany(mappedBy = "item")
     List<Review> reviews;
+    @ManyToMany(mappedBy = "items")
+    List<Order> orderList;
     public Item() {
     }
 
@@ -88,12 +91,12 @@ public class Item {
         this.stateOfItem = stateOfItem;
     }
 
-    public String getImg_source() {
-        return img_source;
+    public String getImgSource() {
+        return imgSource;
     }
 
-    public void setImg_source(String img_source) {
-        this.img_source = img_source;
+    public void setImgSource(String img_source) {
+        this.imgSource = img_source;
     }
 
     public Users getSeller() {
@@ -106,20 +109,20 @@ public class Item {
 
 
     public List<Users> getCart() {
-        return usersWithItem;
+        return usersWithItemInCart;
     }
 
     public void setCart(List<Users> cart) {
-        this.usersWithItem = cart;
+        this.usersWithItemInCart = cart;
     }
 
 
-    public List<Users> getUsersWithItem() {
-        return usersWithItem;
+    public List<Users> getUsersWithItemInCart() {
+        return usersWithItemInCart;
     }
 
-    public void setUsersWithItem(List<Users> usersWithItem) {
-        this.usersWithItem = usersWithItem;
+    public void setUsersWithItemInCart(List<Users> usersWithItem) {
+        this.usersWithItemInCart = usersWithItem;
     }
 
     public List<Review> getReviews() {
@@ -130,10 +133,26 @@ public class Item {
         this.reviews = reviews;
     }
 
+    public List<Order> getOrderList() {
+        return orderList;
+    }
+
+    public void setOrderList(List<Order> orderList) {
+        this.orderList = orderList;
+    }
+
+    public Long getItemCount() {
+        return itemCount;
+    }
+
+    public void setItemCount(Long itemCount) {
+        this.itemCount = itemCount;
+    }
+
     public ItemDTO toDto() {
         ModelMapper modelMapper = new ModelMapper();
         ItemDTO itemDTO = modelMapper.map(this,ItemDTO.class);
-        itemDTO.setSeller_id(seller.getId());
+        itemDTO.setSellerId(seller.getId());
         return itemDTO;
     }
 }

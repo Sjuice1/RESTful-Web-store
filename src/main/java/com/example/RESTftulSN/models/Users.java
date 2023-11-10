@@ -32,9 +32,11 @@ public class Users implements Serializable {
     private List<Item> items;
     @OneToMany(mappedBy = "user")
     private List<VerificationToken> tokens;
+    @OneToMany(mappedBy = "user")
+    private List<Order> orders;
     @ManyToMany
     @JoinTable(
-           name = "cart",
+            name = "cart",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "item_id")
     )
