@@ -33,14 +33,6 @@ public class ItemService {
         itemRepository.save(item);
     }
 
-    private Item dtoToModel(ItemDTO itemDTO) {
-        ModelMapper modelMapper = new ModelMapper();
-        Item item = modelMapper.map(itemDTO,Item.class);
-        item.setPublicationTime(LocalDateTime.now());
-        item.setSeller(userService.getById(itemDTO.getSeller_id()));
-        return item;
-    }
-
     public void deleteById(Long id) {
         Item item = getById(id);
         itemRepository.delete(item);
@@ -63,5 +55,12 @@ public class ItemService {
         item.setPrice(itemDTO.getPrice());
         item.setDescription(item.getDescription());
         itemRepository.save(item);
+    }
+    private Item dtoToModel(ItemDTO itemDTO) {
+        ModelMapper modelMapper = new ModelMapper();
+        Item item = modelMapper.map(itemDTO,Item.class);
+        item.setPublicationTime(LocalDateTime.now());
+        item.setSeller(userService.getById(itemDTO.getSeller_id()));
+        return item;
     }
 }

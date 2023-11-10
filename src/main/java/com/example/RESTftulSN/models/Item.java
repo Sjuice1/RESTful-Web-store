@@ -30,9 +30,11 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "seller_id",referencedColumnName = "id")
     private Users seller;
-
     @ManyToMany(mappedBy = "cart")
     private List<Users> usersWithItem;
+
+    @OneToMany(mappedBy = "item")
+    List<Review> reviews;
     public Item() {
     }
 
@@ -98,6 +100,22 @@ public class Item {
 
     public void setCart(List<Users> cart) {
         this.usersWithItem = cart;
+    }
+
+    public List<Users> getUsersWithItem() {
+        return usersWithItem;
+    }
+
+    public void setUsersWithItem(List<Users> usersWithItem) {
+        this.usersWithItem = usersWithItem;
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
     }
 
     public ItemDTO toDto() {

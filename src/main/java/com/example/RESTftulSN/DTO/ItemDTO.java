@@ -16,9 +16,9 @@ public class ItemDTO {
     @Max(value = 99999999,message = "Invalid price")
     @Min(value = 10,message = "Price is too low")
     private Double price;
-    @NotNull
+    @NotNull(message = "Invalid state of item")
     private STATE_OF_ITEM stateOfItem;
-    @NotNull
+    @NotNull(message = "Seller id must be written")
     private Long seller_id;
 
     public ItemDTO(String name, String description, Double price, STATE_OF_ITEM stateOfItem, Long seller_id) {
@@ -71,4 +71,5 @@ public class ItemDTO {
     public void setSeller_id(Long seller_id) {
         this.seller_id = seller_id;
     }
+
 }

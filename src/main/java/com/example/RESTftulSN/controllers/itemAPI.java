@@ -1,6 +1,7 @@
 package com.example.RESTftulSN.controllers;
 
 import com.example.RESTftulSN.DTO.ItemDTO;
+import com.example.RESTftulSN.DTO.ReviewDTO;
 import com.example.RESTftulSN.DTO.UserDTO;
 import com.example.RESTftulSN.models.Item;
 import com.example.RESTftulSN.services.ItemService;
@@ -36,8 +37,16 @@ public class itemAPI {
         return new ResponseEntity<>(itemList, HttpStatus.OK);
     }
     @GetMapping("{id}")
-    public ResponseEntity<ItemDTO> getUser(@PathVariable("id") Long id){
+    public ResponseEntity<ItemDTO> getItem(@PathVariable("id") Long id){
         return new ResponseEntity<>(itemService.getById(id).toDto(),HttpStatus.OK);
+    }
+    @GetMapping("{id}/reviews")
+    public ResponseEntity<List<ReviewDTO>> getItemReviews(@PathVariable("id") Long id){
+        Item item = itemService.getById(id);
+        List<ReviewDTO> reviewDTOS = item.getReviews().stream()
+                .map(review -> new ReviewDTO(review.getMark(), review.getDescription(), item.getId()))
+                .toList();
+        return new ResponseEntity<>(reviewDTOS,HttpStatus.OK);
     }
     @PostMapping("/add")
     public HttpEntity<HttpStatus> addItem(@RequestBody @Valid ItemDTO itemDTO
@@ -47,12 +56,12 @@ public class itemAPI {
         return new HttpEntity<>(HttpStatus.OK);
     }
     @DeleteMapping("/delete/{id}")
-    public HttpEntity<HttpStatus> deleteUser(@PathVariable("id") Long id){
+    public HttpEntity<HttpStatus> deleteItem(@PathVariable("id") Long id){
         itemService.deleteById(id);
         return new HttpEntity<>(HttpStatus.OK);
     }
     @PatchMapping("/update/{id}")
-    public HttpEntity<HttpStatus> updateUser(@PathVariable("id") Long id
+    public HttpEntity<HttpStatus> updateItem(@PathVariable("id") Long id
             ,@RequestBody @Valid ItemDTO itemDTO
             ,BindingResult bindingResult){
         bindingResultErrorCheck.check(bindingResult);

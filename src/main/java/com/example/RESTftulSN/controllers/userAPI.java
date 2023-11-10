@@ -38,8 +38,8 @@ public class userAPI {
         return new ResponseEntity<>(userList,HttpStatus.OK);
     }
     @GetMapping("{id}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable("id") int id){
-        return new ResponseEntity<>(userService.getById((long)id).toDto(),HttpStatus.OK);
+    public ResponseEntity<UserDTO> getUser(@PathVariable("id") Long id){
+        return new ResponseEntity<>(userService.getById(id).toDto(),HttpStatus.OK);
     }
 
     @PostMapping("/register")
