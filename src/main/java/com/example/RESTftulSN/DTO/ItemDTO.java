@@ -18,15 +18,18 @@ public class ItemDTO {
     private Double price;
     @NotNull(message = "Invalid state of item")
     private STATE_OF_ITEM stateOfItem;
+    @Size(max = 200,message = "IMG source too large")
+    private String img_source;
     @NotNull(message = "Seller id must be written")
     private Long seller_id;
 
-    public ItemDTO(String name, String description, Double price, STATE_OF_ITEM stateOfItem, Long seller_id) {
+    public ItemDTO(String name, String description, Double price, STATE_OF_ITEM stateOfItem, String img_source,Long seller_id) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.stateOfItem = stateOfItem;
         this.seller_id = seller_id;
+        this.img_source = img_source;
     }
 
     public ItemDTO() {
@@ -62,6 +65,14 @@ public class ItemDTO {
 
     public void setStateOfItem(STATE_OF_ITEM stateOfItem) {
         this.stateOfItem = stateOfItem;
+    }
+
+    public String getImg_source() {
+        return img_source;
+    }
+
+    public void setImg_source(String img_source) {
+        this.img_source = img_source;
     }
 
     public Long getSeller_id() {

@@ -38,6 +38,11 @@ public class reviewAPI {
         reviewService.addReview(reviewDTO);
         return new HttpEntity<>(HttpStatus.OK);
     }
+    @DeleteMapping("/delete/{id}")
+    public HttpEntity<HttpStatus> deleteItem(@PathVariable("id") Long id){
+        reviewService.deleteById(id);
+        return new HttpEntity<>(HttpStatus.OK);
+    }
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponseEntity> invalidDataHandler(InvalidDataException invalidDataException){

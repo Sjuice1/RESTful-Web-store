@@ -40,6 +40,7 @@ public class cartAPI {
         List<ItemDTO> list = user.getItems().stream().
                 map(item -> new ItemDTO(item.getName(),item.getDescription()
                         ,item.getPrice(),item.getStateOfItem()
+                        ,item.getImg_source()
                         ,item.getSeller().getId())).toList();
         return new ResponseEntity<>(list,HttpStatus.OK);
     }

@@ -27,6 +27,8 @@ public class Item {
     @Column(name = "state_of_item")
     @Enumerated(EnumType.STRING)
     private STATE_OF_ITEM stateOfItem;
+    @Column(name = "img_source")
+    private String img_source;
     @ManyToOne
     @JoinColumn(name = "seller_id",referencedColumnName = "id")
     private Users seller;
@@ -86,6 +88,14 @@ public class Item {
         this.stateOfItem = stateOfItem;
     }
 
+    public String getImg_source() {
+        return img_source;
+    }
+
+    public void setImg_source(String img_source) {
+        this.img_source = img_source;
+    }
+
     public Users getSeller() {
         return seller;
     }
@@ -94,6 +104,7 @@ public class Item {
         this.seller = seller;
     }
 
+
     public List<Users> getCart() {
         return usersWithItem;
     }
@@ -101,6 +112,7 @@ public class Item {
     public void setCart(List<Users> cart) {
         this.usersWithItem = cart;
     }
+
 
     public List<Users> getUsersWithItem() {
         return usersWithItem;
