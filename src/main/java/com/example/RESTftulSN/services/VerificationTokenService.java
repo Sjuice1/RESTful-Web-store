@@ -6,6 +6,7 @@ import com.example.RESTftulSN.enums.USER_ROLE;
 import com.example.RESTftulSN.models.Users;
 import com.example.RESTftulSN.models.VerificationToken;
 import com.example.RESTftulSN.repositories.VerificationTokenRepository;
+import com.example.RESTftulSN.util.InvalidDataException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

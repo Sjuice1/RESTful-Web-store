@@ -29,16 +29,31 @@ public class itemAPI {
         this.itemService = itemService;
         this.bindingResultErrorCheck = bindingResultErrorCheck;
     }
-
+    ///////////////////////
+    ////Get all items
+    ///////////////////////
     @GetMapping
-    public ResponseEntity<List<Item>> users(){
-        List<Item> itemList = itemService.getAllItems();
+    public ResponseEntity<List<ItemDTO>> items(){
+        List<ItemDTO> itemList = itemService.getAllItems().stream()
+                .map(item->new ItemDTO(item.getName()
+                ,item.getDescription()
+                ,item.getPrice()
+                ,item.getStateOfItem()
+                ,item.getItemCount()
+                ,item.getImgSource()
+                ,item.getItemCount())).toList();
         return new ResponseEntity<>(itemList, HttpStatus.OK);
     }
+    ///////////////////////
+    ////Get item by id
+    ///////////////////////
     @GetMapping("{id}")
     public ResponseEntity<ItemDTO> getItem(@PathVariable("id") Long id){
         return new ResponseEntity<>(itemService.getById(id).toDto(),HttpStatus.OK);
     }
+    ///////////////////////
+    ////Get item reviews
+    ///////////////////////
     @GetMapping("{id}/reviews")
     public ResponseEntity<List<ReviewDTO>> getItemReviews(@PathVariable("id") Long id){
         Item item = itemService.getById(id);
@@ -47,6 +62,9 @@ public class itemAPI {
                 .toList();
         return new ResponseEntity<>(reviewDTOS,HttpStatus.OK);
     }
+    ///////////////////////
+    ////Add new item
+    ///////////////////////
     @PostMapping("/add")
     public HttpEntity<HttpStatus> addItem(@RequestBody @Valid ItemDTO itemDTO
             ,BindingResult bindingResult){
@@ -54,11 +72,17 @@ public class itemAPI {
         itemService.addItem(itemDTO);
         return new HttpEntity<>(HttpStatus.OK);
     }
+    ///////////////////////
+    ////Delete item by id
+    ///////////////////////
     @DeleteMapping("/delete/{id}")
     public HttpEntity<HttpStatus> deleteItem(@PathVariable("id") Long id){
         itemService.deleteById(id);
         return new HttpEntity<>(HttpStatus.OK);
     }
+    ///////////////////////
+    ////Update item by id
+    ///////////////////////
     @PatchMapping("/update/{id}")
     public HttpEntity<HttpStatus> updateItem(@PathVariable("id") Long id
             ,@RequestBody @Valid ItemDTO itemDTO

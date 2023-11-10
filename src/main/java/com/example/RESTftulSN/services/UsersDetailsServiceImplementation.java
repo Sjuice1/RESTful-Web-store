@@ -3,6 +3,7 @@ package com.example.RESTftulSN.services;
 import com.example.RESTftulSN.models.Users;
 import com.example.RESTftulSN.repositories.UsersRepository;
 import com.example.RESTftulSN.security.UserDetailsImplementation;
+import com.example.RESTftulSN.util.InvalidDataException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,7 +27,7 @@ public class UsersDetailsServiceImplementation implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<Users> users = usersRepository.findByUsername(username);
         if(users.isEmpty()){
-            //TODO some logic
+            throw new InvalidDataException("Invalid username / password");
         }
         return new UserDetailsImplementation(users.get());
     }

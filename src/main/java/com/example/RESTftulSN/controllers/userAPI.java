@@ -28,7 +28,6 @@ public class userAPI {
     private final UserService userService;
     private final UsernameAndEmailValidation usernameAndEmailValidation;
     private final BindingResultErrorCheck bindingResultErrorCheck;
-    private final VerificationTokenService verificationTokenService;
     private final RabbitTemplate rabbitTemplate;
 
     @Autowired
@@ -37,26 +36,26 @@ public class userAPI {
         this.usernameAndEmailValidation = usernameAndEmailValidation;
         this.bindingResultErrorCheck = bindingResultErrorCheck;
         this.rabbitTemplate = rabbitTemplate;
-        this.verificationTokenService = verificationTokenService1;
     }
 
+    ///////////////////////
+    ////Get all users
+    ///////////////////////
     @GetMapping
     public ResponseEntity<List<UserDTO>> users(){
         List<UserDTO> userList = userService.getAllUsersDTO();
         return new ResponseEntity<>(userList,HttpStatus.OK);
     }
+    ///////////////////////
+    ////Get user by id
+    ///////////////////////
     @GetMapping("{id}")
     public ResponseEntity<UserDTO> getUser(@PathVariable("id") Long id){
         return new ResponseEntity<>(userService.getById(id).toDto(),HttpStatus.OK);
     }
-
-    @GetMapping("/auth/{token}")
-    public HttpEntity<HttpStatus> authentnicateUser(@PathVariable("token") String token){
-        if(verificationTokenService.checkToken(token)){
-            return new HttpEntity<>(HttpStatus.OK);
-        }
-        return new HttpEntity<>(HttpStatus.NOT_FOUND);
-    }
+    ///////////////////////
+    ////Register new user
+    ///////////////////////
     @PostMapping("/register")
     public HttpEntity<HttpStatus> registerUser(@RequestBody @Valid UsersDTOForRegister usersDTOForRegister, BindingResult bindingResult) {
         usernameAndEmailValidation.validate(new UserDTO(usersDTOForRegister.getUsername()
@@ -70,12 +69,17 @@ public class userAPI {
         rabbitTemplate.convertAndSend("Direct-Exchange","registration",user);
         return new HttpEntity<>(HttpStatus.OK);
     }
-
+    ///////////////////////
+    ////Delete user by id
+    ///////////////////////
     @DeleteMapping("/delete/{id}")
     public HttpEntity<HttpStatus> deleteUser(@PathVariable("id") int id){
         userService.deleteById(id);
         return new HttpEntity<>(HttpStatus.OK);
     }
+    ///////////////////////
+    ////Update user by id
+    ///////////////////////
     @PatchMapping("/update/{id}")
     public HttpEntity<HttpStatus> updateUser(@PathVariable("id") int id
             ,@RequestBody @Valid UserDTO userDTO
@@ -83,7 +87,6 @@ public class userAPI {
         bindingResultErrorCheck.check(bindingResult);
         userService.updateUserById(id,userDTO);
         return new HttpEntity<>(HttpStatus.OK);
-
     }
 
     @ExceptionHandler

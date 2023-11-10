@@ -24,7 +24,9 @@ public class RegistrationConsumer {
         this.tokenGenerator = tokenGenerator;
         this.verificationTokenService = verificationTokenService;
     }
+    ///////////////////
     ////DIRECT-EXCHANGE
+    ///////////////////
     @RabbitListener(queues = "RegistrationToken")
     public void sendRegistrationToken(Users user){
         String tokenGeneration = tokenGenerator.generateToken();
@@ -37,7 +39,9 @@ public class RegistrationConsumer {
         ///////////////////////////////////
     }
 
+    ///////////////////
     ////FANOUT-EXCHANGE
+    ///////////////////
     @RabbitListener(queues = "OrderDetails")
     public void sendOrderDetails(Order order){
         String email = order.getUser().getEmail();
@@ -46,7 +50,9 @@ public class RegistrationConsumer {
         ///////SEND JSON ON email;
         ///////////////////////////////////
     }
+    ///////////////////
     ////FANOUT-EXCHANGE
+    ///////////////////
     @RabbitListener(queues = "SellerNotify")
     public void sendSellerNotify(Order order){
         Map<Users,Item> sellers = order.getItems()

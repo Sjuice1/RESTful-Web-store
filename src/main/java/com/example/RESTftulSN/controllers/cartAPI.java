@@ -33,6 +33,9 @@ public class cartAPI {
         this.itemService = itemService;
         this.bindingResultErrorCheck = bindingResultErrorCheck;
     }
+    ///////////////////////
+    ////Get user cart by user id
+    ///////////////////////
     @GetMapping("/{id}")
     ResponseEntity<List<ItemDTO>> cartOfUser(@PathVariable("id") Long id){
         Users user = userService.getById(id);
@@ -44,7 +47,9 @@ public class cartAPI {
                         ,item.getSeller().getId())).toList();
         return new ResponseEntity<>(list,HttpStatus.OK);
     }
-
+    ///////////////////////
+    ////Put new item in user cart
+    ///////////////////////
     @PostMapping("/put")
     public HttpEntity<HttpStatus> putItemOnCart(@RequestBody @Valid CartDTO cartDTO
             ,BindingResult bindingResult){
@@ -54,6 +59,9 @@ public class cartAPI {
         userService.addItemToCart(users,item);
         return new HttpEntity<>(HttpStatus.OK);
     }
+    ///////////////////////
+    ////Remove item from user cart
+    ///////////////////////
     @DeleteMapping("/remove")
     private HttpEntity<HttpStatus> removeItemFromCart(@RequestBody @Valid CartDTO cartDTO){
         Users users = userService.getById(cartDTO.getUserId());

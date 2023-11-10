@@ -33,17 +33,27 @@ public class orderAPI{
         this.orderService = orderService;
         this.rabbitTemplate = rabbitTemplate;
     }
+    ///////////////////////
+    ////Get order by id
+    ///////////////////////
     @GetMapping("/{id}")
     public ResponseEntity<OrderDTO> getOrder(@PathVariable("id") Long id){
         OrderDTO orderDTO = orderService.getOrderById(id).toDTO();
         return new ResponseEntity<>(orderDTO,HttpStatus.OK);
     }
+    ///////////////////////
+    ////Get order items by order id
+    ///////////////////////
     @GetMapping("/{id}/items")
     public ResponseEntity<List<ItemDTO>> getOrderItems(@PathVariable("id") Long id){
         Order order = orderService.getOrderById(id);
         List<ItemDTO> items= order.getItems().stream().map(Item::toDto).toList();
         return new ResponseEntity<>(items,HttpStatus.OK);
     }
+    ///////////////////////
+    ////Make an order
+    ////Vanish user cart and make order using all cart items
+    ///////////////////////
     @PostMapping("/make/{user_id}")
     public HttpEntity<HttpStatus> makeAnOrder(@PathVariable("user_id") Long user_id){
         Users user = userService.getById(user_id);
@@ -51,7 +61,9 @@ public class orderAPI{
         rabbitTemplate.convertAndSend("Fanout-Exchange","",order);
         return new HttpEntity<>(HttpStatus.OK);
     }
-
+    ///////////////////////
+    ////Update order status
+    ///////////////////////
     @PatchMapping("{id}/status/{new_status}")
     public HttpEntity<HttpStatus> changeStatus(@PathVariable("id")Long id
             ,@PathVariable("new_status") String shippingStatus){
@@ -59,6 +71,9 @@ public class orderAPI{
         orderService.changeStatus(id,SHIPPING_STATUS.findByName(shippingStatus));
         return new HttpEntity<>(HttpStatus.OK);
     }
+    ///////////////////////
+    ////Delete order by id(Not recommended to use)
+    ///////////////////////
     @DeleteMapping("/delete/{id}")
     public HttpEntity<HttpStatus> deleteOrder(@PathVariable("id") Long id){
         orderService.deleteById(id);
@@ -67,7 +82,7 @@ public class orderAPI{
 
     ///////////////////////////////////////////
     ///////////////////////////////////////////
-    /////// NO UPDATE FOR ORDER
+    /////// YOU CAN'T UPDATE ORDER
     ///////////////////////////////////////////
     ///////////////////////////////////////////
 

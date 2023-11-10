@@ -26,11 +26,16 @@ public class reviewAPI {
         this.reviewService = reviewService;
         this.bindingResultErrorCheck = bindingResultErrorCheck;
     }
-
+    ///////////////////////
+    ////Get review by id
+    ///////////////////////
     @GetMapping("{id}")
     public ResponseEntity<ReviewDTO> getReview(@PathVariable("id") Long id){
         return new ResponseEntity<>(reviewService.getById(id).toDto(),HttpStatus.OK);
     }
+    ///////////////////////
+    ////Leave review for item
+    ///////////////////////
     @PostMapping("/leave")
     public HttpEntity<HttpStatus> addReviewToItem(@RequestBody @Valid ReviewDTO reviewDTO
             ,BindingResult bindingResult){
@@ -38,13 +43,19 @@ public class reviewAPI {
         reviewService.addReview(reviewDTO);
         return new HttpEntity<>(HttpStatus.OK);
     }
+    ///////////////////////
+    ////Delete review by id
+    ///////////////////////
     @DeleteMapping("/delete/{id}")
     public HttpEntity<HttpStatus> deleteReview(@PathVariable("id") Long id){
         reviewService.deleteById(id);
         return new HttpEntity<>(HttpStatus.OK);
     }
 
-
+    ///////////////////////
+    ////YOU CANT UPDATE REVIEW
+    ////LEAVE NEW OR DELETE EXISTING ONE
+    ///////////////////////
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponseEntity> invalidDataHandler(InvalidDataException invalidDataException){
