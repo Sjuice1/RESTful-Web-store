@@ -10,6 +10,7 @@ import com.example.RESTftulSN.services.OrderService;
 import com.example.RESTftulSN.services.UserService;
 import com.example.RESTftulSN.util.ErrorResponseEntity;
 import com.example.RESTftulSN.util.InvalidDataException;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -24,11 +25,13 @@ import java.util.List;
 public class orderAPI{
     private final UserService userService;
     private final OrderService orderService;
+    private final RabbitTemplate rabbitTemplate;
 
     @Autowired
-    public orderAPI(UserService userService, OrderService orderService) {
+    public orderAPI(UserService userService, OrderService orderService, RabbitTemplate rabbitTemplate) {
         this.userService = userService;
         this.orderService = orderService;
+        this.rabbitTemplate = rabbitTemplate;
     }
     @GetMapping("/{id}")
     public ResponseEntity<OrderDTO> getOrder(@PathVariable("id") Long id){
@@ -41,6 +44,14 @@ public class orderAPI{
         List<ItemDTO> items= order.getItems().stream().map(Item::toDto).toList();
         return new ResponseEntity<>(items,HttpStatus.OK);
     }
+    @PostMapping("/make/{user_id}")
+    public HttpEntity<HttpStatus> makeAnOrder(@PathVariable("user_id") Long user_id){
+        Users user = userService.getById(user_id);
+        Order order = orderService.orderACart(user);
+        rabbitTemplate.convertAndSend("Fanout-Exchange","",order);
+        return new HttpEntity<>(HttpStatus.OK);
+    }
+
     @PatchMapping("{id}/status/{new_status}")
     public HttpEntity<HttpStatus> changeStatus(@PathVariable("id")Long id
             ,@PathVariable("new_status") String shippingStatus){
@@ -52,14 +63,6 @@ public class orderAPI{
     public HttpEntity<HttpStatus> deleteOrder(@PathVariable("id") Long id){
         orderService.deleteById(id);
         return new HttpEntity<>(HttpStatus.OK);
-    }
-
-    @PostMapping("/make/{user_id}")
-    public HttpEntity<HttpStatus> makeAnOrder(@PathVariable("user_id") Long user_id){
-        Users user = userService.getById(user_id);
-        userService.orderACart(user);
-        return new HttpEntity<>(HttpStatus.OK);
-        /////// TODO rabbitmq order sending
     }
 
     ///////////////////////////////////////////

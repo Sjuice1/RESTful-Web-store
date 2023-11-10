@@ -5,13 +5,14 @@ import com.example.RESTftulSN.enums.SHIPPING_STATUS;
 import jakarta.persistence.*;
 import org.modelmapper.ModelMapper;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "orders")
-public class Order {
+public class Order implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

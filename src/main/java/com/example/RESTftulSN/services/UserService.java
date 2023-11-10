@@ -46,6 +46,9 @@ public class UserService{
         return user;
 
     }
+    public void saveUser(Users user){
+        usersRepository.save(user);
+    }
 
     private Users dtoToModel(UsersDTOForRegister usersDTOForRegister){
         ModelMapper modelMapper = new ModelMapper();
@@ -110,17 +113,4 @@ public class UserService{
         usersRepository.save(users);
     }
 
-    public void orderACart(Users user) {
-        if(user.getCart().isEmpty()){
-            throw new InvalidDataException("Cart is empty");
-        }
-        Order order = new Order();
-        order.setOrderDate(LocalDateTime.now());
-        order.setStatus(SHIPPING_STATUS.PROCESSED);
-        order.setUser(user);
-        user.getCart().stream().forEach(order::setItems);
-        user.getCart().clear();
-        orderRepository.save(order);
-        usersRepository.save(user);
-    }
 }

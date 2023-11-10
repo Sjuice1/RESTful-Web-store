@@ -127,4 +127,12 @@ public class Users implements Serializable {
     public UserDTO toDto(){
         return new ModelMapper().map(this,UserDTO.class);
     }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
 }
