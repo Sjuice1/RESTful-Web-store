@@ -5,13 +5,14 @@ import com.example.RESTftulSN.enums.USER_ROLE;
 import jakarta.persistence.*;
 import org.modelmapper.ModelMapper;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "users")
-public class Users {
+public class Users implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -29,6 +30,8 @@ public class Users {
     private USER_ROLE userRole;
     @OneToMany(mappedBy = "seller")
     private List<Item> items;
+    @OneToMany(mappedBy = "user")
+    private List<VerificationToken> tokens;
     @ManyToMany
     @JoinTable(
            name = "cart",
@@ -105,6 +108,18 @@ public class Users {
             return;
         }
         this.cart.add(item);
+    }
+
+    public List<VerificationToken> getTokens() {
+        return tokens;
+    }
+
+    public void setTokens(List<VerificationToken> tokens) {
+        this.tokens = tokens;
+    }
+
+    public void setCart(List<Item> cart) {
+        this.cart = cart;
     }
 
     public UserDTO toDto(){

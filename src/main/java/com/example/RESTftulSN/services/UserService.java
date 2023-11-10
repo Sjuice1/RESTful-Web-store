@@ -34,9 +34,11 @@ public class UserService{
                  collect(Collectors.toList());
     }
 
-    public void registerUser(UsersDTOForRegister usersDTO) {
+    public Users registerUser(UsersDTOForRegister usersDTO) {
         usersDTO.setPassword(passwordEncoder.encode(usersDTO.getPassword()));
-        usersRepository.save(dtoToModel(usersDTO));
+        Users user = dtoToModel(usersDTO);
+        usersRepository.save(user);
+        return user;
 
     }
 

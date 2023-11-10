@@ -44,6 +44,13 @@ public class reviewAPI {
         return new HttpEntity<>(HttpStatus.OK);
     }
 
+
+    ///////////////////////////////////////////
+    ///////////////////////////////////////////
+    /////// NO UPDATE FOR REVIEW,YOU CAN DELETE OR CREATE NEW ON TOP OF PREVIOUS
+    ///////////////////////////////////////////
+    ///////////////////////////////////////////
+
     @ExceptionHandler
     public ResponseEntity<ErrorResponseEntity> invalidDataHandler(InvalidDataException invalidDataException){
         return new ResponseEntity<>(new ErrorResponseEntity(invalidDataException.getMessage(), LocalDateTime.now()), HttpStatus.BAD_REQUEST);

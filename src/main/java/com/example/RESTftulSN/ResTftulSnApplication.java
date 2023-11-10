@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ResTftulSnApplication {
 
 	public static void main(String[] args) {
+		System.setProperty("spring.amqp.deserialization.trust.all","true");
 		SpringApplication.run(ResTftulSnApplication.class, args);
 	}
 
