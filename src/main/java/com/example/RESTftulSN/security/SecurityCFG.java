@@ -24,7 +24,7 @@ public class SecurityCFG {
 
     @Bean
     public SecurityFilterChain webFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.csrf(csrf->csrf.disable()).authorizeHttpRequests(authorize->authorize.
+        return httpSecurity.authorizeHttpRequests(authorize->authorize.
                         requestMatchers("/api/auth/generate/{id}")
                 .hasRole("GUEST")
                 .requestMatchers("/api/user","/api/user/delete/{id}","/api/order/delete/{id}","/")
