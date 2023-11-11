@@ -34,7 +34,8 @@ public class SecurityCFG {
                 .hasAnyRole("ADMIN","MODERATOR")
                 .requestMatchers("/api/cart/{id}","/api/cart/put","api/cart/remove","/api/item/add","api/item/delete/{id}","api/item/update/{id}")
                 .hasAnyRole("VERIFIED","MODERATOR","ADMIN")
-                .anyRequest().permitAll())
+                .anyRequest().permitAll()).formLogin(login->login.loginProcessingUrl("api/auth/login"))
+                .logout(logout->logout.logoutUrl("/api/auth/logout"))// TODO login
                 .build();
     }
     @Bean
