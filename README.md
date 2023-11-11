@@ -16,8 +16,6 @@ Install latest version of [RabbitMQ](https://www.rabbitmq.com/download.html) and
 Ensure the proper configuration of your database and [JMS](https://en.wikipedia.org/wiki/Jakarta_Messaging) by modifying the properties file. Locate the `application.properties` file in your project and update the relevant settings for your connection.
 
 ## Usage
-To interact with this project, you can use the following commands. 
-
 Each command includes an annotation that provides an explanation of its intended use.
 #### Example
 ```java
