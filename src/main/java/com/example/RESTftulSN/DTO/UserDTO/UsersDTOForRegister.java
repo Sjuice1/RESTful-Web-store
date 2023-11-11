@@ -1,4 +1,4 @@
-package com.example.RESTftulSN.DTO;
+package com.example.RESTftulSN.DTO.UserDTO;
 
 import jakarta.validation.constraints.*;
 

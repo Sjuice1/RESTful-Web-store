@@ -1,7 +1,7 @@
 package com.example.RESTftulSN.models;
 
 import com.example.RESTftulSN.DTO.ItemDTO;
-import com.example.RESTftulSN.enums.STATE_OF_ITEM;
+import com.example.RESTftulSN.enums.Item.STATE_OF_ITEM;
 import jakarta.persistence.*;
 import org.modelmapper.ModelMapper;
 

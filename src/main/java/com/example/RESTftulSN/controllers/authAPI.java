@@ -1,13 +1,13 @@
 package com.example.RESTftulSN.controllers;
 
-import com.example.RESTftulSN.enums.USER_ROLE;
+import com.example.RESTftulSN.enums.User.USER_ROLE;
 import com.example.RESTftulSN.models.Users;
 import com.example.RESTftulSN.security.UserDetailsImplementation;
 import com.example.RESTftulSN.services.UserService;
 import com.example.RESTftulSN.services.VerificationTokenService;
 import com.example.RESTftulSN.util.ErrorResponseEntity;
-import com.example.RESTftulSN.util.ForbiddenAccessException;
-import com.example.RESTftulSN.util.InvalidDataException;
+import com.example.RESTftulSN.util.exceptions.ForbiddenAccessException;
+import com.example.RESTftulSN.util.exceptions.InvalidDataException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;

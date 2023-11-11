@@ -1,6 +1,6 @@
 package com.example.RESTftulSN.DTO;
 
-import com.example.RESTftulSN.enums.SHIPPING_STATUS;
+import com.example.RESTftulSN.enums.Order.SHIPPING_STATUS;
 
 import java.time.LocalDateTime;
 

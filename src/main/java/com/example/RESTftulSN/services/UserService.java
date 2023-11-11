@@ -1,12 +1,12 @@
 package com.example.RESTftulSN.services;
 
-import com.example.RESTftulSN.DTO.UserDTO;
-import com.example.RESTftulSN.DTO.UsersDTOForRegister;
-import com.example.RESTftulSN.enums.USER_ROLE;
+import com.example.RESTftulSN.DTO.UserDTO.UserDTO;
+import com.example.RESTftulSN.DTO.UserDTO.UsersDTOForRegister;
+import com.example.RESTftulSN.enums.User.USER_ROLE;
 import com.example.RESTftulSN.models.Item;
 import com.example.RESTftulSN.models.Users;
 import com.example.RESTftulSN.repositories.UsersRepository;
-import com.example.RESTftulSN.util.InvalidDataException;
+import com.example.RESTftulSN.util.exceptions.InvalidDataException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;

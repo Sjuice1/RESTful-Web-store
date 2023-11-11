@@ -1,7 +1,7 @@
 package com.example.RESTftulSN.models;
 
 import com.example.RESTftulSN.DTO.OrderDTO;
-import com.example.RESTftulSN.enums.SHIPPING_STATUS;
+import com.example.RESTftulSN.enums.Order.SHIPPING_STATUS;
 import jakarta.persistence.*;
 import org.modelmapper.ModelMapper;
 

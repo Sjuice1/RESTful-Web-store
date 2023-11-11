@@ -2,25 +2,22 @@ package com.example.RESTftulSN.controllers;
 
 import com.example.RESTftulSN.DTO.CartDTO;
 import com.example.RESTftulSN.DTO.ItemDTO;
-import com.example.RESTftulSN.enums.USER_ROLE;
+import com.example.RESTftulSN.enums.User.USER_ROLE;
 import com.example.RESTftulSN.models.Item;
 import com.example.RESTftulSN.models.Users;
 import com.example.RESTftulSN.security.BindingResultErrorCheck;
 import com.example.RESTftulSN.security.UserDetailsImplementation;
 import com.example.RESTftulSN.services.ItemService;
 import com.example.RESTftulSN.services.UserService;
-import com.example.RESTftulSN.services.UsersDetailsServiceImplementation;
 import com.example.RESTftulSN.util.ErrorResponseEntity;
-import com.example.RESTftulSN.util.ForbiddenAccessException;
-import com.example.RESTftulSN.util.InvalidDataException;
+import com.example.RESTftulSN.util.exceptions.ForbiddenAccessException;
+import com.example.RESTftulSN.util.exceptions.InvalidDataException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 

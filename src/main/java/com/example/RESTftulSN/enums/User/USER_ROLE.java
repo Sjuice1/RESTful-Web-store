@@ -1,4 +1,4 @@
-package com.example.RESTftulSN.enums;
+package com.example.RESTftulSN.enums.User;
 
 import org.springframework.security.core.GrantedAuthority;
 

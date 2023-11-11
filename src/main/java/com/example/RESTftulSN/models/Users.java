@@ -1,7 +1,7 @@
 package com.example.RESTftulSN.models;
 
-import com.example.RESTftulSN.DTO.UserDTO;
-import com.example.RESTftulSN.enums.USER_ROLE;
+import com.example.RESTftulSN.DTO.UserDTO.UserDTO;
+import com.example.RESTftulSN.enums.User.USER_ROLE;
 import jakarta.persistence.*;
 import org.modelmapper.ModelMapper;
 

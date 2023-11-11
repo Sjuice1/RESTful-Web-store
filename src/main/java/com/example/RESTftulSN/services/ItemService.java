@@ -3,7 +3,7 @@ package com.example.RESTftulSN.services;
 import com.example.RESTftulSN.DTO.ItemDTO;
 import com.example.RESTftulSN.models.Item;
 import com.example.RESTftulSN.repositories.ItemRepository;
-import com.example.RESTftulSN.util.InvalidDataException;
+import com.example.RESTftulSN.util.exceptions.InvalidDataException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

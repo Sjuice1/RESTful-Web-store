@@ -5,7 +5,7 @@ import com.example.RESTftulSN.models.Item;
 import com.example.RESTftulSN.models.Review;
 import com.example.RESTftulSN.models.Users;
 import com.example.RESTftulSN.repositories.ReviewRepository;
-import com.example.RESTftulSN.util.InvalidDataException;
+import com.example.RESTftulSN.util.exceptions.InvalidDataException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

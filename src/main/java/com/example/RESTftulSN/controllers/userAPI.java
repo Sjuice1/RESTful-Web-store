@@ -1,8 +1,8 @@
 package com.example.RESTftulSN.controllers;
 
-import com.example.RESTftulSN.DTO.UserDTO;
-import com.example.RESTftulSN.DTO.UsersDTOForRegister;
-import com.example.RESTftulSN.enums.USER_ROLE;
+import com.example.RESTftulSN.DTO.UserDTO.UserDTO;
+import com.example.RESTftulSN.DTO.UserDTO.UsersDTOForRegister;
+import com.example.RESTftulSN.enums.User.USER_ROLE;
 import com.example.RESTftulSN.models.Users;
 import com.example.RESTftulSN.security.TokenGenerator;
 import com.example.RESTftulSN.security.UserDetailsImplementation;
@@ -10,9 +10,9 @@ import com.example.RESTftulSN.services.UserService;
 import com.example.RESTftulSN.security.BindingResultErrorCheck;
 import com.example.RESTftulSN.services.VerificationTokenService;
 import com.example.RESTftulSN.util.ErrorResponseEntity;
-import com.example.RESTftulSN.util.ForbiddenAccessException;
-import com.example.RESTftulSN.util.InvalidDataException;
-import com.example.RESTftulSN.util.UsernameAndEmailValidation;
+import com.example.RESTftulSN.util.exceptions.ForbiddenAccessException;
+import com.example.RESTftulSN.util.exceptions.InvalidDataException;
+import com.example.RESTftulSN.util.validations.UsernameAndEmailValidation;
 import jakarta.validation.Valid;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;

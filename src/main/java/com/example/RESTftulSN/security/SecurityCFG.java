@@ -1,6 +1,5 @@
 package com.example.RESTftulSN.security;
 
-import com.example.RESTftulSN.enums.USER_ROLE;
 import com.example.RESTftulSN.services.UsersDetailsServiceImplementation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

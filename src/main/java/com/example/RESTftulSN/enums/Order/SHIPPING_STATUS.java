@@ -1,6 +1,6 @@
-package com.example.RESTftulSN.enums;
+package com.example.RESTftulSN.enums.Order;
 
-import com.example.RESTftulSN.util.InvalidDataException;
+import com.example.RESTftulSN.util.exceptions.InvalidDataException;
 
 public enum SHIPPING_STATUS {
     PROCESSED,SHIPPED,ARRIVED,TAKEN;

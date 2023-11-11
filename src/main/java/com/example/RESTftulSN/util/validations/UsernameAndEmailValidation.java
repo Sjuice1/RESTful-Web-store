@@ -1,6 +1,6 @@
-package com.example.RESTftulSN.util;
+package com.example.RESTftulSN.util.validations;
 
-import com.example.RESTftulSN.DTO.UserDTO;
+import com.example.RESTftulSN.DTO.UserDTO.UserDTO;
 import com.example.RESTftulSN.repositories.UsersRepository;
 import com.example.RESTftulSN.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

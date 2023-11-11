@@ -3,7 +3,7 @@ package com.example.RESTftulSN.services;
 import com.example.RESTftulSN.models.Users;
 import com.example.RESTftulSN.repositories.UsersRepository;
 import com.example.RESTftulSN.security.UserDetailsImplementation;
-import com.example.RESTftulSN.util.InvalidDataException;
+import com.example.RESTftulSN.util.exceptions.InvalidDataException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

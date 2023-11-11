@@ -1,6 +1,6 @@
 package com.example.RESTftulSN.DTO;
 
-import com.example.RESTftulSN.enums.STATE_OF_ITEM;
+import com.example.RESTftulSN.enums.Item.STATE_OF_ITEM;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;

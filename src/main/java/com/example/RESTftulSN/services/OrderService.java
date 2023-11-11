@@ -1,10 +1,10 @@
 package com.example.RESTftulSN.services;
 
-import com.example.RESTftulSN.enums.SHIPPING_STATUS;
+import com.example.RESTftulSN.enums.Order.SHIPPING_STATUS;
 import com.example.RESTftulSN.models.Order;
 import com.example.RESTftulSN.models.Users;
 import com.example.RESTftulSN.repositories.OrderRepository;
-import com.example.RESTftulSN.util.InvalidDataException;
+import com.example.RESTftulSN.util.exceptions.InvalidDataException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
