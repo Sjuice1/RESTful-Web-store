@@ -1,6 +1,7 @@
 # RESTful Web-store
 ____
 ![spring](https://img.shields.io/badge/SpringBoot-V_3.15-green) ![rabbitMq](https://img.shields.io/badge/RabbitMQ-V_3.12.8-orange) ![Java](https://img.shields.io/badge/Java-17-orange)
+
 Welcome to the documentation of ***RESTful Web-Store***. This project provides a programming interface for interacting with the store through an API. With it, you can retrieve information about products, place orders, and much more.
 #### ****If you want to check API on [Heroku](https://dashboard.heroku.com) DM me in [TG](https://t.me/primeking666)****
 ## Installation
