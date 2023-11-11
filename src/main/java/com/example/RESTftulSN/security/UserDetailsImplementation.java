@@ -48,4 +48,12 @@ public class UserDetailsImplementation implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public Users getUsers() {
+        return users;
+    }
+
+    public void setUsers(Users users) {
+        this.users = users;
+    }
 }

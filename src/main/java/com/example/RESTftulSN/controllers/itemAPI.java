@@ -2,16 +2,21 @@ package com.example.RESTftulSN.controllers;
 
 import com.example.RESTftulSN.DTO.ItemDTO;
 import com.example.RESTftulSN.DTO.ReviewDTO;
+import com.example.RESTftulSN.enums.USER_ROLE;
 import com.example.RESTftulSN.models.Item;
+import com.example.RESTftulSN.models.Users;
+import com.example.RESTftulSN.security.UserDetailsImplementation;
 import com.example.RESTftulSN.services.ItemService;
 import com.example.RESTftulSN.security.BindingResultErrorCheck;
 import com.example.RESTftulSN.util.ErrorResponseEntity;
+import com.example.RESTftulSN.util.ForbiddenAccessException;
 import com.example.RESTftulSN.util.InvalidDataException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -69,6 +74,7 @@ public class itemAPI {
     public HttpEntity<HttpStatus> addItem(@RequestBody @Valid ItemDTO itemDTO
             ,BindingResult bindingResult){
         bindingResultErrorCheck.check(bindingResult);
+        accessCheck(getCurrentUser().getUsers(),itemDTO.getSellerId());
         itemService.addItem(itemDTO);
         return new HttpEntity<>(HttpStatus.OK);
     }
@@ -77,7 +83,9 @@ public class itemAPI {
     ///////////////////////
     @DeleteMapping("/delete/{id}")
     public HttpEntity<HttpStatus> deleteItem(@PathVariable("id") Long id){
-        itemService.deleteById(id);
+        Item item = itemService.getById(id);
+        accessCheck(getCurrentUser().getUsers(),item.getSeller().getId());
+        itemService.deleteItem(item);
         return new HttpEntity<>(HttpStatus.OK);
     }
     ///////////////////////
@@ -88,13 +96,28 @@ public class itemAPI {
             ,@RequestBody @Valid ItemDTO itemDTO
             ,BindingResult bindingResult){
         bindingResultErrorCheck.check(bindingResult);
-        itemService.updateUserById(id,itemDTO);
+        accessCheck(getCurrentUser().getUsers(),itemDTO.getSellerId());
+        itemService.updateItemById(id,itemDTO);
         return new HttpEntity<>(HttpStatus.OK);
     }
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponseEntity> invalidDataHandler(InvalidDataException invalidDataException){
         return new ResponseEntity<>(new ErrorResponseEntity(invalidDataException.getMessage(), LocalDateTime.now()),HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponseEntity> forbiddenAccessException(ForbiddenAccessException forbiddenAccessException){
+        return new ResponseEntity<>(new ErrorResponseEntity(forbiddenAccessException.getMessage(), LocalDateTime.now()),HttpStatus.FORBIDDEN);
+    }
+
+    private UserDetailsImplementation getCurrentUser(){
+        return (UserDetailsImplementation) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+    private void accessCheck(Users user, Long id){
+        if(!user.getUserRole().equals(USER_ROLE.ROLE_ADMIN) && user.getUserRole().equals(USER_ROLE.ROLE_MODERATOR) && !user.getId().equals(id)) {
+            throw new ForbiddenAccessException("You don't have permission for that");
+        }
     }
 
 }

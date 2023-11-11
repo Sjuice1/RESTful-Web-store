@@ -32,12 +32,11 @@ public class ItemService {
         itemRepository.save(item);
     }
     @Transactional
-    public void deleteById(Long id) {
-        Item item = getById(id);
+    public void deleteItem(Item item) {
         itemRepository.delete(item);
     }
     @Transactional
-    public void updateUserById(Long id, ItemDTO itemDTO) {
+    public void updateItemById(Long id, ItemDTO itemDTO) {
         Item item = getById(id);
         if(!itemDTO.getSellerId().equals(item.getSeller().getId())){
             throw new InvalidDataException("You cant change seller");

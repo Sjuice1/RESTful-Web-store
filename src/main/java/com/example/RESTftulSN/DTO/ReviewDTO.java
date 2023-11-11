@@ -15,6 +15,8 @@ public class ReviewDTO {
     private String description;
     @NotNull(message = "Item id must be written")
     private Long item_id;
+    @NotNull(message = "User id must be written")
+    private Long user_id;
 
     public ReviewDTO(Integer mark, String description, Long item_id) {
         this.mark = mark;
@@ -47,5 +49,13 @@ public class ReviewDTO {
 
     public void setItem_id(Long item_id) {
         this.item_id = item_id;
+    }
+
+    public Long getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(Long user_id) {
+        this.user_id = user_id;
     }
 }

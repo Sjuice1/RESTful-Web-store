@@ -25,17 +25,17 @@ public class SecurityCFG {
 
     @Bean
     public SecurityFilterChain webFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.authorizeHttpRequests(authorize->authorize.
-                        requestMatchers("api/auth/generate/{id}")
+        return httpSecurity.csrf(csrf->csrf.disable()).authorizeHttpRequests(authorize->authorize.
+                        requestMatchers("/api/auth/generate/{id}")
                 .hasRole("GUEST")
-                .requestMatchers("/api/user","/api/user/delete/{id}","/api/order/delete/{id}")
+                .requestMatchers("/api/user","/api/user/delete/{id}","/api/order/delete/{id}","/")
                 .hasRole("ADMIN")
                 .requestMatchers("/api/order/{id}/status/{new_status}")
                 .hasAnyRole("ADMIN","MODERATOR")
-                .requestMatchers("/api/cart/{id}","/api/cart/put","api/cart/remove","/api/item/add","api/item/delete/{id}","api/item/update/{id}")
+                .requestMatchers("/api/cart/{id}","/api/cart/put","/api/cart/remove","/api/item/add","/api/item/delete/{id}","/api/item/update/{id}","/api/review/leave","/api/review/update/{id}")
                 .hasAnyRole("VERIFIED","MODERATOR","ADMIN")
-                .anyRequest().permitAll()).formLogin(login->login.loginProcessingUrl("api/auth/login"))
-                .logout(logout->logout.logoutUrl("/api/auth/logout"))// TODO login
+                .anyRequest().permitAll()).formLogin(login->login.loginProcessingUrl("/api/auth/login").defaultSuccessUrl("/api/user",true))
+                .logout(logout->logout.logoutUrl("/api/auth/logout"))//
                 .build();
     }
     @Bean
@@ -47,7 +47,7 @@ public class SecurityCFG {
     }
 
     @Bean
-    protected PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
 }

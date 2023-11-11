@@ -44,13 +44,13 @@ public class UserService{
         usersRepository.save(user);
     }
     @Transactional
-    public void deleteById(int id) {
+    public void deleteById(Long id) {
         Users user = getById((long)id);
         usersRepository.delete(user);
     }
 
     @Transactional
-    public void updateUserById(int id, UserDTO userDTO) {
+    public void updateUserById(Long id, UserDTO userDTO) {
         Optional<Users> optionalUser = usersRepository.findById(id);
         if(optionalUser.isEmpty()){
             throw new InvalidDataException("No user with such id");
@@ -100,7 +100,7 @@ public class UserService{
     }
 
     public Users getById(Long userId) {
-       Optional<Users> user = usersRepository.findById((int)(long)userId);
+       Optional<Users> user = usersRepository.findById(userId);
        if(user.isEmpty()){
            throw new InvalidDataException("There's no user with such id");
        }

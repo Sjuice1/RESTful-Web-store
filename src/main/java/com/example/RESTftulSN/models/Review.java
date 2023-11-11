@@ -22,6 +22,9 @@ public class Review {
     @ManyToOne
     @JoinColumn(name = "item_id",referencedColumnName = "id")
     private Item item;
+    @ManyToOne
+    @JoinColumn(name = "user_id",referencedColumnName = "id")
+    private Users user;
 
     public Review() {
     }
@@ -64,6 +67,14 @@ public class Review {
 
     public void setCreation_date(LocalDateTime creation_date) {
         this.creation_date = creation_date;
+    }
+
+    public Users getUser() {
+        return user;
+    }
+
+    public void setUser(Users user) {
+        this.user = user;
     }
 
     public ReviewDTO toDto(){

@@ -41,6 +41,8 @@ public class Users implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "item_id")
     )
     private List<Item> cart;
+    @OneToMany(mappedBy = "user")
+    private List<Review> reviews;
     public Users() {
     }
 

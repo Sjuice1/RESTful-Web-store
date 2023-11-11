@@ -2,12 +2,15 @@ package com.example.RESTftulSN.controllers;
 
 import com.example.RESTftulSN.DTO.UserDTO;
 import com.example.RESTftulSN.DTO.UsersDTOForRegister;
+import com.example.RESTftulSN.enums.USER_ROLE;
 import com.example.RESTftulSN.models.Users;
 import com.example.RESTftulSN.security.TokenGenerator;
+import com.example.RESTftulSN.security.UserDetailsImplementation;
 import com.example.RESTftulSN.services.UserService;
 import com.example.RESTftulSN.security.BindingResultErrorCheck;
 import com.example.RESTftulSN.services.VerificationTokenService;
 import com.example.RESTftulSN.util.ErrorResponseEntity;
+import com.example.RESTftulSN.util.ForbiddenAccessException;
 import com.example.RESTftulSN.util.InvalidDataException;
 import com.example.RESTftulSN.util.UsernameAndEmailValidation;
 import jakarta.validation.Valid;
@@ -16,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -73,7 +77,7 @@ public class userAPI {
     ////Delete user by id
     ///////////////////////
     @DeleteMapping("/delete/{id}")
-    public HttpEntity<HttpStatus> deleteUser(@PathVariable("id") int id){
+    public HttpEntity<HttpStatus> deleteUser(@PathVariable("id") Long id){
         userService.deleteById(id);
         return new HttpEntity<>(HttpStatus.OK);
     }
@@ -81,9 +85,10 @@ public class userAPI {
     ////Update user by id
     ///////////////////////
     @PatchMapping("/update/{id}")
-    public HttpEntity<HttpStatus> updateUser(@PathVariable("id") int id
+    public HttpEntity<HttpStatus> updateUser(@PathVariable("id") Long id
             ,@RequestBody @Valid UserDTO userDTO
             ,BindingResult bindingResult){
+        accessCheck(getCurrentUser().getUsers(),id);
         bindingResultErrorCheck.check(bindingResult);
         userService.updateUserById(id,userDTO);
         return new HttpEntity<>(HttpStatus.OK);
@@ -92,6 +97,19 @@ public class userAPI {
     @ExceptionHandler
     public ResponseEntity<ErrorResponseEntity> invalidDataHandler(InvalidDataException invalidDataException){
         return new ResponseEntity<>(new ErrorResponseEntity(invalidDataException.getMessage(), LocalDateTime.now()),HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponseEntity> forbiddenAccessException(ForbiddenAccessException forbiddenAccessException){
+        return new ResponseEntity<>(new ErrorResponseEntity(forbiddenAccessException.getMessage(), LocalDateTime.now()),HttpStatus.FORBIDDEN);
+    }
+
+    private UserDetailsImplementation getCurrentUser(){
+        return (UserDetailsImplementation)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+    private void accessCheck(Users user,Long id){
+        if(!user.getUserRole().equals(USER_ROLE.ROLE_ADMIN) && !user.getUserRole().equals(USER_ROLE.ROLE_MODERATOR) &&  !user.getId().equals(id)) {
+            throw new ForbiddenAccessException("You don't have permission for that");
+        }
     }
 
 }

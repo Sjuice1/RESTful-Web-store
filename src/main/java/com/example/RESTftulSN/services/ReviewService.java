@@ -3,6 +3,7 @@ package com.example.RESTftulSN.services;
 import com.example.RESTftulSN.DTO.ReviewDTO;
 import com.example.RESTftulSN.models.Item;
 import com.example.RESTftulSN.models.Review;
+import com.example.RESTftulSN.models.Users;
 import com.example.RESTftulSN.repositories.ReviewRepository;
 import com.example.RESTftulSN.util.InvalidDataException;
 import org.modelmapper.ModelMapper;
@@ -17,14 +18,16 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class ReviewService {
     private final ReviewRepository reviewRepository;
-    private final ModelMapper modelMapper;
     private final ItemService itemService;
+    private final UserService userService;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public ReviewService(ReviewRepository reviewRepository,ModelMapper modelMapper, ItemService itemService) {
+    public ReviewService(ReviewRepository reviewRepository, ModelMapper modelMapper, ItemService itemService, UserService userService) {
         this.reviewRepository = reviewRepository;
         this.modelMapper = modelMapper;
         this.itemService = itemService;
+        this.userService = userService;
     }
 
     @Transactional
@@ -34,8 +37,7 @@ public class ReviewService {
     }
 
     @Transactional
-    public void deleteById(Long id) {
-        Review review = getById(id);
+    public void delete(Review review) {
         reviewRepository.delete(review);
     }
 
@@ -48,10 +50,12 @@ public class ReviewService {
     }
 
     private Review dtoToModel(ReviewDTO reviewDTO) {
+        Users user = userService.getById(reviewDTO.getUser_id());
         Item item = itemService.getById(reviewDTO.getItem_id());
         Review review = modelMapper.map(reviewDTO,Review.class);
         review.setItem(item);
         review.setCreation_date(LocalDateTime.now());
+        review.setUser(user);
         return review;
 
     }
