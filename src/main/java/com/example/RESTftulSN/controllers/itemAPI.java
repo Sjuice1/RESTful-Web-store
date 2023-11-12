@@ -12,10 +12,12 @@ import com.example.RESTftulSN.util.ErrorResponseEntity;
 import com.example.RESTftulSN.util.exceptions.ForbiddenAccessException;
 import com.example.RESTftulSN.util.exceptions.InvalidDataException;
 import jakarta.validation.Valid;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -57,7 +59,7 @@ public class itemAPI {
         return new ResponseEntity<>(itemService.getById(id).toDto(),HttpStatus.OK);
     }
     ///////////////////////
-    ////Get item reviews
+    ////Get item reviews by item id
     ///////////////////////
     @GetMapping("{id}/reviews")
     public ResponseEntity<List<ReviewDTO>> getItemReviews(@PathVariable("id") Long id){
@@ -68,8 +70,9 @@ public class itemAPI {
         return new ResponseEntity<>(reviewDTOS,HttpStatus.OK);
     }
     ///////////////////////
-    ////Add new item
+    ////Add new item using JSON like ItemDTO
     ///////////////////////
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
     @PostMapping("/add")
     public HttpEntity<HttpStatus> addItem(@RequestBody @Valid ItemDTO itemDTO
             ,BindingResult bindingResult){
@@ -82,6 +85,7 @@ public class itemAPI {
     ////Delete item by id
     ///////////////////////
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
     public HttpEntity<HttpStatus> deleteItem(@PathVariable("id") Long id){
         Item item = itemService.getById(id);
         accessCheck(getCurrentUser().getUsers(),item.getSeller().getId());
@@ -92,6 +96,7 @@ public class itemAPI {
     ////Update item by id
     ///////////////////////
     @PatchMapping("/update/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
     public HttpEntity<HttpStatus> updateItem(@PathVariable("id") Long id
             ,@RequestBody @Valid ItemDTO itemDTO
             ,BindingResult bindingResult){

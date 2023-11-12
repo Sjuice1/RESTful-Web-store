@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +46,7 @@ public class authAPI {
     ////Generate new token for user by user id
     ///////////////////////
     @PostMapping("/generate/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_GUEST')")
     public HttpEntity<HttpStatus> generateNewToken(@PathVariable("id") Long id){
         Users user = userService.getById(id);
         accessCheck(getCurrentUser().getUsers(),user.getId());

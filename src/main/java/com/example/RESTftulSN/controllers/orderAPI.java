@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,6 +42,7 @@ public class orderAPI{
     ////Get order by id
     ///////////////////////
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
     public ResponseEntity<OrderDTO> getOrder(@PathVariable("id") Long id){
         OrderDTO orderDTO = orderService.getOrderById(id).toDTO();
         accessCheck(getCurrentUser().getUsers(),orderDTO.getUser_id());
@@ -50,6 +52,7 @@ public class orderAPI{
     ////Get order items by order id
     ///////////////////////
     @GetMapping("/{id}/items")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
     public ResponseEntity<List<ItemDTO>> getOrderItems(@PathVariable("id") Long id){
         Order order = orderService.getOrderById(id);
         accessCheck(getCurrentUser().getUsers(),order.getUser().getId());
@@ -61,6 +64,7 @@ public class orderAPI{
     ////Vanish user cart and make order using all cart items
     ///////////////////////
     @PostMapping("/make/{user_id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
     public HttpEntity<HttpStatus> makeAnOrder(@PathVariable("user_id") Long user_id){
         Users user = userService.getById(user_id);
         accessCheck(getCurrentUser().getUsers(),user_id);
@@ -71,6 +75,7 @@ public class orderAPI{
     ///////////////////////
     ////Update order status
     ///////////////////////
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR')")
     @PatchMapping("{id}/status/{new_status}")
     public HttpEntity<HttpStatus> changeStatus(@PathVariable("id")Long id
             ,@PathVariable("new_status") String shippingStatus){
@@ -80,6 +85,7 @@ public class orderAPI{
     ///////////////////////
     ////Delete order by id(Not recommended to use)
     ///////////////////////
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @DeleteMapping("/delete/{id}")
     public HttpEntity<HttpStatus> deleteOrder(@PathVariable("id") Long id){
         orderService.deleteById(id);

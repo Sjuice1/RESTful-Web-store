@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -42,6 +43,8 @@ public class reviewAPI {
     ///////////////////////
     ////Leave review for item
     ///////////////////////
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
     @PostMapping("/leave")
     public HttpEntity<HttpStatus> addReviewToItem(@RequestBody @Valid ReviewDTO reviewDTO
             ,BindingResult bindingResult){
@@ -53,6 +56,7 @@ public class reviewAPI {
     ///////////////////////
     ////Delete review by id
     ///////////////////////
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
     @DeleteMapping("/delete/{id}")
     public HttpEntity<HttpStatus> deleteReview(@PathVariable("id") Long id){
         Review review = reviewService.getById(id);

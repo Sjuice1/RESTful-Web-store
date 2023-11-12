@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +47,8 @@ public class userAPI {
     ////Get all users
     ///////////////////////
     @GetMapping
-    public ResponseEntity<List<UserDTO>> users(){
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<List<UserDTO>> getAllUsers(){
         List<UserDTO> userList = userService.getAllUsersDTO();
         return new ResponseEntity<>(userList,HttpStatus.OK);
     }
@@ -54,7 +56,7 @@ public class userAPI {
     ////Get user by id
     ///////////////////////
     @GetMapping("{id}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable("id") Long id){
+    public ResponseEntity<UserDTO> getUserById(@PathVariable("id") Long id){
         return new ResponseEntity<>(userService.getById(id).toDto(),HttpStatus.OK);
     }
     ///////////////////////
@@ -76,6 +78,7 @@ public class userAPI {
     ///////////////////////
     ////Delete user by id
     ///////////////////////
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/delete/{id}")
     public HttpEntity<HttpStatus> deleteUser(@PathVariable("id") Long id){
         userService.deleteById(id);

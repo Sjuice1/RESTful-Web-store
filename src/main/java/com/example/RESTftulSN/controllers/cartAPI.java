@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +42,7 @@ public class cartAPI {
     ////Get user cart by user id
     ///////////////////////
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
     ResponseEntity<List<ItemDTO>> cartOfUser(@PathVariable("id") Long id){
         Users user = userService.getById(id);
         accessCheck(getCurrentUser().getUsers(),id);
@@ -56,6 +58,7 @@ public class cartAPI {
     ////Put new item in user cart
     ///////////////////////
     @PostMapping("/put")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
     public HttpEntity<HttpStatus> putItemOnCart(@RequestBody @Valid CartDTO cartDTO
             ,BindingResult bindingResult){
         bindingResultErrorCheck.check(bindingResult);
@@ -69,7 +72,8 @@ public class cartAPI {
     ////Remove item from user cart
     ///////////////////////
     @DeleteMapping("/remove")
-    private HttpEntity<HttpStatus> removeItemFromCart(@RequestBody @Valid CartDTO cartDTO,BindingResult bindingResult){
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
+    public HttpEntity<HttpStatus> removeItemFromCart(@RequestBody @Valid CartDTO cartDTO,BindingResult bindingResult){
         bindingResultErrorCheck.check(bindingResult);
         Users user = userService.getById(cartDTO.getUserId());
         accessCheck(getCurrentUser().getUsers(),cartDTO.getUserId());
