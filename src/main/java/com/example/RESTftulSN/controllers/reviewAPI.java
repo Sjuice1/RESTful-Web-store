@@ -26,19 +26,17 @@ import java.time.LocalDateTime;
 @RequestMapping("/api/review")
 public class reviewAPI {
     private final ReviewService reviewService;
-    private final BindingResultErrorCheck bindingResultErrorCheck;
 
     @Autowired
-    public reviewAPI(ReviewService reviewService, BindingResultErrorCheck bindingResultErrorCheck) {
+    public reviewAPI(ReviewService reviewService) {
         this.reviewService = reviewService;
-        this.bindingResultErrorCheck = bindingResultErrorCheck;
     }
     ///////////////////////
     ////Get review by id
     ///////////////////////
     @GetMapping("{id}")
-    public ResponseEntity<ReviewDTO> getReview(@PathVariable("id") Long id){
-        return new ResponseEntity<>(reviewService.getById(id).toDto(),HttpStatus.OK);
+    public ResponseEntity<?> getReview(@PathVariable("id") Long id){
+        return reviewService.getReviewById(id);
     }
     ///////////////////////
     ////Leave review for item
@@ -46,23 +44,17 @@ public class reviewAPI {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
     @PostMapping("/leave")
-    public HttpEntity<HttpStatus> addReviewToItem(@RequestBody @Valid ReviewDTO reviewDTO
+    public ResponseEntity<?> addReviewToItem(@RequestBody @Valid ReviewDTO reviewDTO
             ,BindingResult bindingResult){
-        bindingResultErrorCheck.check(bindingResult);
-        accessCheck(getCurrentUser().getUsers(),reviewDTO.getUser_id());
-        reviewService.addReview(reviewDTO);
-        return new HttpEntity<>(HttpStatus.OK);
+        return reviewService.addReview(reviewDTO,bindingResult);
     }
     ///////////////////////
     ////Delete review by id
     ///////////////////////
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
     @DeleteMapping("/delete/{id}")
-    public HttpEntity<HttpStatus> deleteReview(@PathVariable("id") Long id){
-        Review review = reviewService.getById(id);
-        accessCheck(getCurrentUser().getUsers(),review.getUser().getId());
-        reviewService.delete(review);
-        return new HttpEntity<>(HttpStatus.OK);
+    public ResponseEntity<?> deleteReview(@PathVariable("id") Long id){
+        return reviewService.delete(id);
     }
 
     ///////////////////////
@@ -71,20 +63,12 @@ public class reviewAPI {
     ///////////////////////
 
     @ExceptionHandler
-    public ResponseEntity<ErrorResponseEntity> invalidDataHandler(InvalidDataException invalidDataException){
+    public ResponseEntity<?> invalidDataHandler(InvalidDataException invalidDataException){
         return new ResponseEntity<>(new ErrorResponseEntity(invalidDataException.getMessage(), LocalDateTime.now()), HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler
-    public ResponseEntity<ErrorResponseEntity> forbiddenAccessException(ForbiddenAccessException forbiddenAccessException){
+    public ResponseEntity<?> forbiddenAccessException(ForbiddenAccessException forbiddenAccessException){
         return new ResponseEntity<>(new ErrorResponseEntity(forbiddenAccessException.getMessage(), LocalDateTime.now()),HttpStatus.FORBIDDEN);
     }
 
-    private UserDetailsImplementation getCurrentUser(){
-        return (UserDetailsImplementation) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    }
-    private void accessCheck(Users user, Long id){
-        if(!user.getUserRole().equals(USER_ROLE.ROLE_ADMIN) && !user.getUserRole().equals(USER_ROLE.ROLE_MODERATOR) &&  !user.getId().equals(id)) {
-            throw new ForbiddenAccessException("You don't have permission for that");
-        }
-    }
 }

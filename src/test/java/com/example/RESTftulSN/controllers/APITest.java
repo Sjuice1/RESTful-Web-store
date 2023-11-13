@@ -102,8 +102,8 @@ public class APITest{
         @DisplayName("Compare list of users size with database user count")
         @WithMockUser(username = "user",authorities = "ROLE_ADMIN")
         public void checkAllUsers(){
-            ResponseEntity<List<UserDTO>> users = userAPITest.getAllUsers();
-            assertThat(users.getBody().size()).isEqualTo(usersRepository.count());
+            List<UserDTO> users = (List<UserDTO>)userAPITest.getAllUsers().getBody();
+            assertThat(users.size()).isEqualTo(usersRepository.count());
         }
 
         @Test
@@ -236,8 +236,9 @@ public class APITest{
         @Test
         @DisplayName("Compare list of item size with database item count")
         public void checkAllUsers(){
-            ResponseEntity<List<ItemDTO>> users = itemAPITest.items();
-            assertThat(users.getBody().size()).isEqualTo(itemRepository.count());
+            ResponseEntity<?> users = itemAPITest.items();
+            List<ItemDTO> list = (List<ItemDTO>)users.getBody();
+            assertThat(list.size()).isEqualTo(itemRepository.count());
         }
         @Test
         @DisplayName("Get item by id with invalid id")
@@ -625,7 +626,6 @@ public class APITest{
         @Test
         @WithMockUser(username = "user",password = "user",authorities = "ROLE_ADMIN")
         @DisplayName("Get order by id with working id")
-        @Disabled(value = "Working in app")
         public void workingIdTest(){
             try {
                 orderAPITest.getOrder(2L);
@@ -677,8 +677,8 @@ public class APITest{
         @Test
         @DisplayName("Get invalid token")
         public void invalidIdTest(){
-            HttpEntity<HttpStatus> status = authAPITest.authenticateUser("fsa");
-            assertThat(status.getBody().equals(HttpStatus.NOT_FOUND));
+            ResponseEntity<?> status = authAPITest.authenticateUser("fsa");
+            assertThat(status.getStatusCode().equals(HttpStatus.NOT_FOUND));
         }
     }
 

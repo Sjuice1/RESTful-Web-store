@@ -10,11 +10,11 @@ import org.springframework.validation.Validator;
 
 @Component
 public class UsernameAndEmailValidation implements Validator {
-    private final UserService userService;
+    private final UsersRepository usersRepository;
 
     @Autowired
-    public UsernameAndEmailValidation(UsersRepository usersRepository, UserService userService) {
-        this.userService = userService;
+    public UsernameAndEmailValidation(UsersRepository usersRepository1) {
+        this.usersRepository = usersRepository1;
     }
 
     @Override
@@ -25,8 +25,8 @@ public class UsernameAndEmailValidation implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         UserDTO userDTO = (UserDTO) target;
-        Boolean usernameCheck = userService.isUsernameExist(userDTO.getUsername());
-        Boolean emailCheck = userService.isEmail(userDTO.getEmail());
+        Boolean usernameCheck = usersRepository.existsByUsername(userDTO.getUsername());
+        Boolean emailCheck = usersRepository.existsByEmail(userDTO.getEmail());
         if(usernameCheck){
             errors.rejectValue("username","500","Username already exist");
         }

@@ -8,6 +8,8 @@ import com.example.RESTftulSN.models.VerificationToken;
 import com.example.RESTftulSN.repositories.VerificationTokenRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,14 +32,15 @@ public class VerificationTokenService {
         verificationTokenRepository.save(verificationToken);
     }
     @Transactional
-    public boolean checkToken(String token) {
+    public ResponseEntity<?> checkToken(String token) {
         Optional<VerificationToken> verificationToken = verificationTokenRepository.findByToken(token);
         if(verificationToken.isPresent()){
             verificationToken.get().getUser().setUserRole(USER_ROLE.ROLE_VERIFIED);
             verificationTokenRepository.delete(verificationToken.get());
-            return true;
+            return new ResponseEntity<>(HttpStatus.OK);
         }
-        return false;
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
     }
     private VerificationToken dtoToModel(VerificationTokenDTO verificationTokenDTO,Users user) {
         VerificationToken verificationToken = modelMapper.map(verificationTokenDTO,VerificationToken.class);

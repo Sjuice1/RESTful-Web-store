@@ -29,100 +29,66 @@ import java.util.List;
 @RequestMapping("/api/item")
 public class itemAPI {
     private final ItemService itemService;
-    private final BindingResultErrorCheck bindingResultErrorCheck;
-
     @Autowired
-    public itemAPI(ItemService itemService, BindingResultErrorCheck bindingResultErrorCheck) {
+    public itemAPI(ItemService itemService) {
         this.itemService = itemService;
-        this.bindingResultErrorCheck = bindingResultErrorCheck;
     }
     ///////////////////////
     ////Get all items
     ///////////////////////
     @GetMapping
-    public ResponseEntity<List<ItemDTO>> items(){
-        List<ItemDTO> itemList = itemService.getAllItems().stream()
-                .map(item->new ItemDTO(item.getName()
-                ,item.getDescription()
-                ,item.getPrice()
-                ,item.getStateOfItem()
-                ,item.getItemCount()
-                ,item.getImgSource()
-                ,item.getItemCount())).toList();
-        return new ResponseEntity<>(itemList, HttpStatus.OK);
+    public ResponseEntity<?> items(){
+        return itemService.getAllItems();
     }
     ///////////////////////
     ////Get item by id
     ///////////////////////
     @GetMapping("{id}")
-    public ResponseEntity<ItemDTO> getItem(@PathVariable("id") Long id){
-        return new ResponseEntity<>(itemService.getById(id).toDto(),HttpStatus.OK);
+    public ResponseEntity<?> getItem(@PathVariable("id") Long id){
+        return itemService.getItem(id);
     }
     ///////////////////////
     ////Get item reviews by item id
     ///////////////////////
     @GetMapping("{id}/reviews")
-    public ResponseEntity<List<ReviewDTO>> getItemReviews(@PathVariable("id") Long id){
-        Item item = itemService.getById(id);
-        List<ReviewDTO> reviewDTOS = item.getReviews().stream()
-                .map(review -> new ReviewDTO(review.getMark(), review.getDescription(), item.getId()))
-                .toList();
-        return new ResponseEntity<>(reviewDTOS,HttpStatus.OK);
+    public ResponseEntity<?> getItemReviews(@PathVariable("id") Long id){
+        return itemService.getItemReviews(id);
     }
     ///////////////////////
     ////Add new item using JSON like ItemDTO
     ///////////////////////
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
     @PostMapping("/add")
-    public HttpEntity<HttpStatus> addItem(@RequestBody @Valid ItemDTO itemDTO
+    public ResponseEntity<?> addItem(@RequestBody @Valid ItemDTO itemDTO
             ,BindingResult bindingResult){
-        bindingResultErrorCheck.check(bindingResult);
-        accessCheck(getCurrentUser().getUsers(),itemDTO.getSellerId());
-        itemService.addItem(itemDTO);
-        return new HttpEntity<>(HttpStatus.OK);
+        return itemService.addItem(itemDTO,bindingResult);
     }
     ///////////////////////
     ////Delete item by id
     ///////////////////////
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
-    public HttpEntity<HttpStatus> deleteItem(@PathVariable("id") Long id){
-        Item item = itemService.getById(id);
-        accessCheck(getCurrentUser().getUsers(),item.getSeller().getId());
-        itemService.deleteItem(item);
-        return new HttpEntity<>(HttpStatus.OK);
+    public ResponseEntity<?> deleteItem(@PathVariable("id") Long id){
+       return itemService.deleteItem(id);
     }
     ///////////////////////
     ////Update item by id
     ///////////////////////
     @PatchMapping("/update/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
-    public HttpEntity<HttpStatus> updateItem(@PathVariable("id") Long id
-            ,@RequestBody @Valid ItemDTO itemDTO
-            ,BindingResult bindingResult){
-        bindingResultErrorCheck.check(bindingResult);
-        accessCheck(getCurrentUser().getUsers(),itemDTO.getSellerId());
-        itemService.updateItemById(id,itemDTO);
-        return new HttpEntity<>(HttpStatus.OK);
+    public ResponseEntity<?> updateItem(@PathVariable("id") Long id,@RequestBody @Valid ItemDTO itemDTO,BindingResult bindingResult){
+        return itemService.updateItemById(id,itemDTO,bindingResult);
     }
 
     @ExceptionHandler
-    public ResponseEntity<ErrorResponseEntity> invalidDataHandler(InvalidDataException invalidDataException){
+    public ResponseEntity<?>  invalidDataHandler(InvalidDataException invalidDataException){
         return new ResponseEntity<>(new ErrorResponseEntity(invalidDataException.getMessage(), LocalDateTime.now()),HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
-    public ResponseEntity<ErrorResponseEntity> forbiddenAccessException(ForbiddenAccessException forbiddenAccessException){
+    public ResponseEntity<?>  forbiddenAccessException(ForbiddenAccessException forbiddenAccessException){
         return new ResponseEntity<>(new ErrorResponseEntity(forbiddenAccessException.getMessage(), LocalDateTime.now()),HttpStatus.FORBIDDEN);
     }
 
-    private UserDetailsImplementation getCurrentUser(){
-        return (UserDetailsImplementation) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    }
-    private void accessCheck(Users user, Long id){
-        if(!user.getUserRole().equals(USER_ROLE.ROLE_ADMIN) && user.getUserRole().equals(USER_ROLE.ROLE_MODERATOR) && !user.getId().equals(id)) {
-            throw new ForbiddenAccessException("You don't have permission for that");
-        }
-    }
 
 }

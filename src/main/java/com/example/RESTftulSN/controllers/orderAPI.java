@@ -28,36 +28,26 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/order")
 public class orderAPI{
-    private final UserService userService;
     private final OrderService orderService;
-    private final RabbitTemplate rabbitTemplate;
-
     @Autowired
-    public orderAPI(UserService userService, OrderService orderService, RabbitTemplate rabbitTemplate) {
-        this.userService = userService;
+    public orderAPI(OrderService orderService) {
         this.orderService = orderService;
-        this.rabbitTemplate = rabbitTemplate;
     }
     ///////////////////////
     ////Get order by id
     ///////////////////////
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
-    public ResponseEntity<OrderDTO> getOrder(@PathVariable("id") Long id){
-        OrderDTO orderDTO = orderService.getOrderById(id).toDTO();
-        accessCheck(getCurrentUser().getUsers(),orderDTO.getUser_id());
-        return new ResponseEntity<>(orderDTO,HttpStatus.OK);
+    public ResponseEntity<?> getOrder(@PathVariable("id") Long id){
+        return orderService.getOrderById(id);
     }
     ///////////////////////
     ////Get order items by order id
     ///////////////////////
     @GetMapping("/{id}/items")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
-    public ResponseEntity<List<ItemDTO>> getOrderItems(@PathVariable("id") Long id){
-        Order order = orderService.getOrderById(id);
-        accessCheck(getCurrentUser().getUsers(),order.getUser().getId());
-        List<ItemDTO> items= order.getItems().stream().map(Item::toDto).toList();
-        return new ResponseEntity<>(items,HttpStatus.OK);
+    public ResponseEntity<?> getOrderItems(@PathVariable("id") Long id){
+        return orderService.getOrderItems(id);
     }
     ///////////////////////
     ////Make an order
@@ -65,31 +55,25 @@ public class orderAPI{
     ///////////////////////
     @PostMapping("/make/{user_id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
-    public HttpEntity<HttpStatus> makeAnOrder(@PathVariable("user_id") Long user_id){
-        Users user = userService.getById(user_id);
-        accessCheck(getCurrentUser().getUsers(),user_id);
-        Order order = orderService.orderACart(user);
-        rabbitTemplate.convertAndSend("Fanout-Exchange","",order);
-        return new HttpEntity<>(HttpStatus.OK);
+    public ResponseEntity<?> makeAnOrder(@PathVariable("user_id") Long user_id){
+        return  orderService.orderACart(user_id);
     }
     ///////////////////////
     ////Update order status
     ///////////////////////
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR')")
     @PatchMapping("{id}/status/{new_status}")
-    public HttpEntity<HttpStatus> changeStatus(@PathVariable("id")Long id
+    public ResponseEntity<?> changeStatus(@PathVariable("id")Long id
             ,@PathVariable("new_status") String shippingStatus){
-        orderService.changeStatus(id,SHIPPING_STATUS.findByName(shippingStatus));
-        return new HttpEntity<>(HttpStatus.OK);
+        return orderService.changeStatus(id,SHIPPING_STATUS.findByName(shippingStatus));
     }
     ///////////////////////
     ////Delete order by id(Not recommended to use)
     ///////////////////////
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @DeleteMapping("/delete/{id}")
-    public HttpEntity<HttpStatus> deleteOrder(@PathVariable("id") Long id){
-        orderService.deleteById(id);
-        return new HttpEntity<>(HttpStatus.OK);
+    public ResponseEntity<?> deleteOrder(@PathVariable("id") Long id){
+        return orderService.deleteById(id);
     }
 
     ///////////////////////////////////////////
@@ -99,21 +83,13 @@ public class orderAPI{
     ///////////////////////////////////////////
 
     @ExceptionHandler
-    public ResponseEntity<ErrorResponseEntity> invalidDataHandler(InvalidDataException invalidDataException){
+    public ResponseEntity<?> invalidDataHandler(InvalidDataException invalidDataException){
         return new ResponseEntity<>(new ErrorResponseEntity(invalidDataException.getMessage(), LocalDateTime.now()),HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
-    public ResponseEntity<ErrorResponseEntity> forbiddenAccessException(ForbiddenAccessException forbiddenAccessException){
+    public ResponseEntity<?> forbiddenAccessException(ForbiddenAccessException forbiddenAccessException){
         return new ResponseEntity<>(new ErrorResponseEntity(forbiddenAccessException.getMessage(), LocalDateTime.now()),HttpStatus.FORBIDDEN);
     }
 
-    private UserDetailsImplementation getCurrentUser(){
-        return (UserDetailsImplementation) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    }
-    private void accessCheck(Users user,Long id){
-        if(!user.getUserRole().equals(USER_ROLE.ROLE_ADMIN) && !user.getUserRole().equals(USER_ROLE.ROLE_MODERATOR) && !user.getId().equals(id)) {
-            throw new ForbiddenAccessException("You don't have permission for that");
-        }
-    }
 }

@@ -31,16 +31,10 @@ import java.util.List;
 @RequestMapping("/api/user")
 public class userAPI {
     private final UserService userService;
-    private final UsernameAndEmailValidation usernameAndEmailValidation;
-    private final BindingResultErrorCheck bindingResultErrorCheck;
-    private final RabbitTemplate rabbitTemplate;
 
     @Autowired
-    public userAPI(UserService userService, UsernameAndEmailValidation usernameAndEmailValidation, BindingResultErrorCheck bindingResultErrorCheck, RabbitTemplate rabbitTemplate, TokenGenerator tokenGenerator, VerificationTokenService verificationTokenService, VerificationTokenService verificationTokenService1) {
+    public userAPI(UserService userService) {
         this.userService = userService;
-        this.usernameAndEmailValidation = usernameAndEmailValidation;
-        this.bindingResultErrorCheck = bindingResultErrorCheck;
-        this.rabbitTemplate = rabbitTemplate;
     }
 
     ///////////////////////
@@ -48,71 +42,47 @@ public class userAPI {
     ///////////////////////
     @GetMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<UserDTO>> getAllUsers(){
-        List<UserDTO> userList = userService.getAllUsersDTO();
-        return new ResponseEntity<>(userList,HttpStatus.OK);
+    public ResponseEntity<?> getAllUsers(){
+        return userService.getAllUsersDTO();
     }
     ///////////////////////
     ////Get user by id
     ///////////////////////
     @GetMapping("{id}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable("id") Long id){
-        return new ResponseEntity<>(userService.getById(id).toDto(),HttpStatus.OK);
+    public ResponseEntity<?> getUserById(@PathVariable("id") Long id){
+        return userService.getUserById(id);
     }
     ///////////////////////
     ////Register new user
     ///////////////////////
     @PostMapping("/register")
-    public HttpEntity<HttpStatus> registerUser(@RequestBody @Valid UsersDTOForRegister usersDTOForRegister, BindingResult bindingResult) {
-        usernameAndEmailValidation.validate(new UserDTO(usersDTOForRegister.getUsername()
-                ,usersDTOForRegister.getPassword()
-                ,usersDTOForRegister.getEmail()), bindingResult);
-        if (!usersDTOForRegister.getRepeatPassword().equals(usersDTOForRegister.getPassword())) {
-            bindingResult.rejectValue("password", "", "Different Password");
-        }
-        bindingResultErrorCheck.check(bindingResult);
-        Users user = userService.registerUser(usersDTOForRegister);
-        rabbitTemplate.convertAndSend("Direct-Exchange","registration",user);
-        return new HttpEntity<>(HttpStatus.OK);
+    public ResponseEntity<?> registerUser(@RequestBody @Valid UsersDTOForRegister usersDTOForRegister, BindingResult bindingResult) {
+        return userService.registerUser(usersDTOForRegister,bindingResult);
     }
     ///////////////////////
     ////Delete user by id
     ///////////////////////
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/delete/{id}")
-    public HttpEntity<HttpStatus> deleteUser(@PathVariable("id") Long id){
-        userService.deleteById(id);
-        return new HttpEntity<>(HttpStatus.OK);
+    public ResponseEntity<?> deleteUser(@PathVariable("id") Long id){
+        return userService.deleteById(id);
+
     }
     ///////////////////////
     ////Update user by id
     ///////////////////////
     @PatchMapping("/update/{id}")
-    public HttpEntity<HttpStatus> updateUser(@PathVariable("id") Long id
-            ,@RequestBody @Valid UserDTO userDTO
-            ,BindingResult bindingResult){
-        accessCheck(getCurrentUser().getUsers(),id);
-        bindingResultErrorCheck.check(bindingResult);
-        userService.updateUserById(id,userDTO);
-        return new HttpEntity<>(HttpStatus.OK);
+    public ResponseEntity<?> updateUser(@PathVariable("id") Long id,@RequestBody @Valid UserDTO userDTO,BindingResult bindingResult){
+
+        return userService.updateUserById(id,userDTO,bindingResult);
     }
 
     @ExceptionHandler
-    public ResponseEntity<ErrorResponseEntity> invalidDataHandler(InvalidDataException invalidDataException){
+    public ResponseEntity<?> invalidDataHandler(InvalidDataException invalidDataException){
         return new ResponseEntity<>(new ErrorResponseEntity(invalidDataException.getMessage(), LocalDateTime.now()),HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler
-    public ResponseEntity<ErrorResponseEntity> forbiddenAccessException(ForbiddenAccessException forbiddenAccessException){
+    public ResponseEntity<?> forbiddenAccessException(ForbiddenAccessException forbiddenAccessException){
         return new ResponseEntity<>(new ErrorResponseEntity(forbiddenAccessException.getMessage(), LocalDateTime.now()),HttpStatus.FORBIDDEN);
     }
-
-    private UserDetailsImplementation getCurrentUser(){
-        return (UserDetailsImplementation)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    }
-    private void accessCheck(Users user,Long id){
-        if(!user.getUserRole().equals(USER_ROLE.ROLE_ADMIN) && !user.getUserRole().equals(USER_ROLE.ROLE_MODERATOR) &&  !user.getId().equals(id)) {
-            throw new ForbiddenAccessException("You don't have permission for that");
-        }
-    }
-
 }
