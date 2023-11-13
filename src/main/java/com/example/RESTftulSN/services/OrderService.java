@@ -31,13 +31,7 @@ public class OrderService {
         this.orderRepository = orderRepository;
         this.rabbitTemplate = rabbitTemplate;
     }
-    public Order getById(Long id){
-        Optional<Order> order = orderRepository.findById(id);
-        if(order.isEmpty()){
-            throw new InvalidDataException("There's no order with that id");
-        }
-        return order.get();
-    }
+
     @Transactional
     public ResponseEntity<?> changeStatus(Long id, SHIPPING_STATUS shippingStatus) {
         Order order = getById(id);
@@ -67,6 +61,13 @@ public class OrderService {
         userService.saveUser(user);
         rabbitTemplate.convertAndSend("Fanout-Exchange","",order);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+    public Order getById(Long id){
+        Optional<Order> order = orderRepository.findById(id);
+        if(order.isEmpty()){
+            throw new InvalidDataException("There's no order with that id");
+        }
+        return order.get();
     }
     public ResponseEntity<?> getOrderById(Long id){
         return new ResponseEntity<>(getById(id).toDTO(), HttpStatus.OK);

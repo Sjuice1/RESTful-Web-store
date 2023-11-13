@@ -1,22 +1,15 @@
 package com.example.RESTftulSN.controllers;
 
 import com.example.RESTftulSN.DTO.ReviewDTO;
-import com.example.RESTftulSN.enums.User.USER_ROLE;
-import com.example.RESTftulSN.models.Review;
-import com.example.RESTftulSN.models.Users;
-import com.example.RESTftulSN.security.BindingResultErrorCheck;
-import com.example.RESTftulSN.security.UserDetailsImplementation;
 import com.example.RESTftulSN.services.ReviewService;
 import com.example.RESTftulSN.util.ErrorResponseEntity;
 import com.example.RESTftulSN.util.exceptions.ForbiddenAccessException;
 import com.example.RESTftulSN.util.exceptions.InvalidDataException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 

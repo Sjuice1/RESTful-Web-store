@@ -102,22 +102,23 @@ public class UserService{
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @Transactional
-
-
-
     public ResponseEntity<?> getAllUsersDTO(){
          List<UserDTO> userDTOS  = usersRepository.findAll().stream().map(user ->
                  new UserDTO(user.getUsername(),user.getPassword(), user.getEmail())).
                  collect(Collectors.toList());
          return new ResponseEntity<>(userDTOS,HttpStatus.OK);
     }
-
-    public boolean isUsernameExist(String username) {
-        return usersRepository.existsByUsername(username);
-    }
-
-    public boolean isEmail(String email) {
-        return usersRepository.existsByEmail(email);
+    @Transactional
+    public ResponseEntity<?> removeItemFromCart(CartDTO cartDTO, BindingResult bindingResult) {
+        bindingResultErrorCheck.check(bindingResult);
+        Users users = getById(cartDTO.getUserId());
+        Item item = itemService.getById(cartDTO.getItemId());
+        if(!users.getCart().contains(item)){
+            throw new InvalidDataException("No item in cart");
+        }
+        users.getCart().remove(item);
+        usersRepository.save(users);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     public Users getById(Long userId) {
@@ -142,18 +143,6 @@ public class UserService{
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    public ResponseEntity<?> removeItemFromCart(CartDTO cartDTO, BindingResult bindingResult) {
-        bindingResultErrorCheck.check(bindingResult);
-        Users users = getById(cartDTO.getUserId());
-        Item item = itemService.getById(cartDTO.getItemId());
-        if(!users.getCart().contains(item)){
-            throw new InvalidDataException("No item in cart");
-        }
-        users.getCart().remove(item);
-        usersRepository.save(users);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
     public ResponseEntity<?> getCartOfUser(Long id) {
         Users user = getById(id);
         List<ItemDTO> list = user.getItems().stream().
@@ -168,5 +157,12 @@ public class UserService{
     public ResponseEntity<?> getUserById(Long id) {
         Users users = getById(id);
         return new ResponseEntity<>(users.toDto(),HttpStatus.OK);
+    }
+    public boolean isUsernameExist(String username) {
+        return usersRepository.existsByUsername(username);
+    }
+
+    public boolean isEmail(String email) {
+        return usersRepository.existsByEmail(email);
     }
 }

@@ -82,13 +82,6 @@ public class ItemService {
         return item.get();
     }
 
-    private Item dtoToModel(ItemDTO itemDTO) {
-        Item item = modelMapper.map(itemDTO,Item.class);
-        item.setPublicationTime(LocalDateTime.now());
-        item.setSeller(getUserById(itemDTO.getSellerId()));
-        return item;
-    }
-
     public ResponseEntity<?> getItem(Long id) {
         return new ResponseEntity<>(getById(id),HttpStatus.OK);
     }
@@ -106,5 +99,11 @@ public class ItemService {
             throw new InvalidDataException("There's no user with such id");
         }
         return user.get();
+    }
+    private Item dtoToModel(ItemDTO itemDTO) {
+        Item item = modelMapper.map(itemDTO,Item.class);
+        item.setPublicationTime(LocalDateTime.now());
+        item.setSeller(getUserById(itemDTO.getSellerId()));
+        return item;
     }
 }

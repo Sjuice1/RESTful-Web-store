@@ -59,6 +59,10 @@ public class ReviewService {
         return review.get();
     }
 
+    public ResponseEntity<?> getReviewById(Long id) {
+        Review review = getById(id);
+        return new ResponseEntity<>(review.toDto(),HttpStatus.OK);
+    }
     private Review dtoToModel(ReviewDTO reviewDTO) {
         Users user = userService.getById(reviewDTO.getUser_id());
         Item item = itemService.getById(reviewDTO.getItem_id());
@@ -70,9 +74,4 @@ public class ReviewService {
 
     }
 
-
-    public ResponseEntity<?> getReviewById(Long id) {
-        Review review = getById(id);
-        return new ResponseEntity<>(review.toDto(),HttpStatus.OK);
-    }
 }
