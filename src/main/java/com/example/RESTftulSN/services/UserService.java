@@ -2,8 +2,7 @@ package com.example.RESTftulSN.services;
 
 import com.example.RESTftulSN.DTO.CartDTO;
 import com.example.RESTftulSN.DTO.ItemDTO;
-import com.example.RESTftulSN.DTO.UserDTO.UserDTO;
-import com.example.RESTftulSN.DTO.UserDTO.UsersDTOForRegister;
+import com.example.RESTftulSN.DTO.UserDTO;
 import com.example.RESTftulSN.enums.User.USER_ROLE;
 import com.example.RESTftulSN.models.Item;
 import com.example.RESTftulSN.models.Users;
@@ -11,6 +10,7 @@ import com.example.RESTftulSN.repositories.UsersRepository;
 import com.example.RESTftulSN.security.BindingResultErrorCheck;
 import com.example.RESTftulSN.util.exceptions.InvalidDataException;
 import com.example.RESTftulSN.util.validations.UsernameAndEmailValidation;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,6 @@ import org.springframework.validation.BindingResult;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -48,15 +47,14 @@ public class UserService{
         this.bindingResultErrorCheck = bindingResultErrorCheck;
     }
     @Transactional
-    public ResponseEntity<?> registerUser(UsersDTOForRegister usersDTOForRegister, BindingResult bindingResult) {
-        usernameAndEmailValidation.validate(new UserDTO(usersDTOForRegister.getUsername()
-                ,usersDTOForRegister.getPassword()
-                ,usersDTOForRegister.getEmail()), bindingResult);
-        if (!usersDTOForRegister.getRepeatPassword().equals(usersDTOForRegister.getPassword())) {
+    public ResponseEntity<?> registerUser(UserDTO.Request.Register usersDTO, BindingResult bindingResult) {
+        usernameAndEmailValidation.validate(usersDTO, bindingResult);
+        if (!usersDTO.getRepeatPassword().equals(usersDTO.getPassword())) {
             bindingResult.rejectValue("password", "", "Different Password");
         }
-        usersDTOForRegister.setPassword(passwordEncoder.encode(usersDTOForRegister.getPassword()));
-        Users user = dtoToModel(usersDTOForRegister);
+        bindingResultErrorCheck.check(bindingResult);
+        Users user = dtoToModel(usersDTO);
+        user.setPassword(usersDTO.getPassword());
         usersRepository.save(user);
         rabbitTemplate.convertAndSend("Direct-Exchange","registration",user);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -74,9 +72,9 @@ public class UserService{
     }
 
     @Transactional
-    public ResponseEntity<?> updateUserById(Long id, UserDTO userDTO, BindingResult bindingResult) {
+    public ResponseEntity<?> updateUserById(UserDTO.Request.Update userDTO, BindingResult bindingResult) {
         bindingResultErrorCheck.check(bindingResult);
-        Users user = getById(id);
+        Users user = getById(userDTO.getId());
         if(!user.getUsername().equals(userDTO.getUsername()) && isUsernameExist(userDTO.getUsername())){
             throw new InvalidDataException("Username already exist");
         }
@@ -90,7 +88,7 @@ public class UserService{
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @Transactional
-    public ResponseEntity<?> addItemToCart(CartDTO cartDTO,BindingResult bindingResult) {
+    public ResponseEntity<?> addItemToCart(CartDTO.Request.Create cartDTO, BindingResult bindingResult) {
         bindingResultErrorCheck.check(bindingResult);
         Users users = getById(cartDTO.getUserId());
         Item item = itemService.getById(cartDTO.getItemId());
@@ -103,13 +101,11 @@ public class UserService{
     }
     @Transactional
     public ResponseEntity<?> getAllUsersDTO(){
-         List<UserDTO> userDTOS  = usersRepository.findAll().stream().map(user ->
-                 new UserDTO(user.getUsername(),user.getPassword(), user.getEmail())).
-                 collect(Collectors.toList());
+         List<UserDTO.Response.Create> userDTOS  = usersRepository.findAll().stream().map(Users::toDto).toList();
          return new ResponseEntity<>(userDTOS,HttpStatus.OK);
     }
     @Transactional
-    public ResponseEntity<?> removeItemFromCart(CartDTO cartDTO, BindingResult bindingResult) {
+    public ResponseEntity<?> removeItemFromCart(CartDTO.Request.Create cartDTO, BindingResult bindingResult) {
         bindingResultErrorCheck.check(bindingResult);
         Users users = getById(cartDTO.getUserId());
         Item item = itemService.getById(cartDTO.getItemId());
@@ -129,8 +125,8 @@ public class UserService{
        return user.get();
     }
 
-    private Users dtoToModel(UsersDTOForRegister usersDTOForRegister){
-        Users user = modelMapper.map(usersDTOForRegister,Users.class);
+    private Users dtoToModel(UserDTO.Request.Register usersDTO){
+        Users user = modelMapper.map(usersDTO,Users.class);
         user.setUserRole(USER_ROLE.ROLE_GUEST);
         user.setCreation_date(LocalDateTime.now());
         return user;
@@ -145,17 +141,14 @@ public class UserService{
 
     public ResponseEntity<?> getCartOfUser(Long id) {
         Users user = getById(id);
-        List<ItemDTO> list = user.getItems().stream().
-                map(item -> new ItemDTO(item.getName(),item.getDescription()
-                        ,item.getPrice(),item.getStateOfItem(),
-                        item.getItemCount()
-                        ,item.getImgSource()
-                        ,item.getSeller().getId())).toList();
+        List<ItemDTO.Request.Create> list = user.getItems().stream().
+                map(item -> item.toDto()).toList();
         return new ResponseEntity<>(list,HttpStatus.OK);
     }
 
     public ResponseEntity<?> getUserById(Long id) {
         Users users = getById(id);
+        System.out.println(users.toDto());
         return new ResponseEntity<>(users.toDto(),HttpStatus.OK);
     }
     public boolean isUsernameExist(String username) {

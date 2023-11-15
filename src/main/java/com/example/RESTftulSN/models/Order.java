@@ -77,10 +77,7 @@ public class Order implements Serializable {
         }
         items.add(item);
     }
-    public OrderDTO toDTO(){
-        ModelMapper modelMapper = new ModelMapper();
-        OrderDTO orderDTO = modelMapper.map(this,OrderDTO.class);
-        orderDTO.setUser_id(this.getUser().getId());
-        return orderDTO;
+    public OrderDTO.Response.Create toDTO(){
+        return new OrderDTO.Response.Create(this.getId(),this.getOrderDate(),this.getStatus(),this.getUser().getId());
     }
 }

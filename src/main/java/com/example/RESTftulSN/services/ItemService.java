@@ -3,11 +3,13 @@ package com.example.RESTftulSN.services;
 import com.example.RESTftulSN.DTO.ItemDTO;
 import com.example.RESTftulSN.DTO.ReviewDTO;
 import com.example.RESTftulSN.models.Item;
+import com.example.RESTftulSN.models.Review;
 import com.example.RESTftulSN.models.Users;
 import com.example.RESTftulSN.repositories.ItemRepository;
 import com.example.RESTftulSN.repositories.UsersRepository;
 import com.example.RESTftulSN.security.BindingResultErrorCheck;
 import com.example.RESTftulSN.util.exceptions.InvalidDataException;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,7 +38,7 @@ public class ItemService {
         this.bindingResultErrorCheck = bindingResultErrorCheck;
     }
     @Transactional
-    public ResponseEntity<?> addItem(ItemDTO itemDTO, BindingResult bindingResult) {
+    public ResponseEntity<?> addItem(ItemDTO.Request.@Valid Create itemDTO, BindingResult bindingResult) {
         bindingResultErrorCheck.check(bindingResult);
         Item item = dtoToModel(itemDTO);
         itemRepository.save(item);
@@ -49,9 +51,9 @@ public class ItemService {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @Transactional
-    public ResponseEntity<?> updateItemById(Long id, ItemDTO itemDTO, BindingResult bindingResult) {
+    public ResponseEntity<?> updateItemById(ItemDTO.Request.@Valid Create itemDTO, BindingResult bindingResult) {
         bindingResultErrorCheck.check(bindingResult);
-        Item item = getById(id);
+        Item item = getById(itemDTO.getId());
         if(!itemDTO.getSellerId().equals(item.getSeller().getId())){
             throw new InvalidDataException("You cant change seller");
         }
@@ -64,14 +66,8 @@ public class ItemService {
     }
 
     public ResponseEntity<?> getAllItems(){
-        List<ItemDTO> itemDTOS = itemRepository.findAll().stream()
-                .map(item->new ItemDTO(item.getName()
-                        ,item.getDescription()
-                        ,item.getPrice()
-                        ,item.getStateOfItem()
-                        ,item.getItemCount()
-                        ,item.getImgSource()
-                        ,item.getItemCount())).toList();
+        List<ItemDTO.Request.Create> itemDTOS = itemRepository.findAll().stream()
+                .map(Item::toDto).toList();
         return new ResponseEntity<>(itemDTOS, HttpStatus.OK);
     }
     public Item getById(Long id) {
@@ -88,8 +84,8 @@ public class ItemService {
 
     public ResponseEntity<?> getItemReviews(Long id) {
         Item item = getById(id);
-        List<ReviewDTO> reviewDTOS = item.getReviews().stream()
-                .map(review -> new ReviewDTO(review.getMark(), review.getDescription(), item.getId()))
+        List<ReviewDTO.Request.Create> reviewDTOS = item.getReviews().stream()
+                .map(Review::toDto)
                 .toList();
         return new ResponseEntity<>(reviewDTOS,HttpStatus.OK);
     }
@@ -100,7 +96,7 @@ public class ItemService {
         }
         return user.get();
     }
-    private Item dtoToModel(ItemDTO itemDTO) {
+    private Item dtoToModel(ItemDTO.Request.@Valid Create itemDTO) {
         Item item = modelMapper.map(itemDTO,Item.class);
         item.setPublicationTime(LocalDateTime.now());
         item.setSeller(getUserById(itemDTO.getSellerId()));

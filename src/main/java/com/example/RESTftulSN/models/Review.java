@@ -14,7 +14,7 @@ public class Review {
     @Column(name = "id")
     private Long id;
     @Column(name = "mark")
-    private Integer mark;
+    private Long mark;
     @Column(name = "description")
     private String description;
     @Column(name = "creation_date")
@@ -37,11 +37,11 @@ public class Review {
         this.id = id;
     }
 
-    public Integer getMark() {
+    public Long getMark() {
         return mark;
     }
 
-    public void setMark(Integer mark) {
+    public void setMark(Long mark) {
         this.mark = mark;
     }
 
@@ -77,10 +77,8 @@ public class Review {
         this.user = user;
     }
 
-    public ReviewDTO toDto(){
-       ModelMapper modelMapper = new ModelMapper();
-        ReviewDTO reviewDTO = modelMapper.map(this,ReviewDTO.class);
-        reviewDTO.setItem_id(item.getId());
-        return reviewDTO;
+    public ReviewDTO.Request.Create toDto(){
+        return new ReviewDTO.Request.Create(this.getMark(),this.getDescription(),this
+                .getItem().getId(),this.getUser().getId());
     }
 }

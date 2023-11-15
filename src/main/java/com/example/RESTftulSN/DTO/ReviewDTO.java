@@ -4,58 +4,50 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Value;
 
 public class ReviewDTO {
 
-    @Min(value = 1,message = "Indalid mark")
-    @Max(value = 10,message = "Invalid mark")
-    private Integer mark;
-
-    @Size(max = 250,message = "Description too big")
-    private String description;
-    @NotNull(message = "Item id must be written")
-    private Long item_id;
-    @NotNull(message = "User id must be written")
-    private Long user_id;
-
-    public ReviewDTO(Integer mark, String description, Long item_id) {
-        this.mark = mark;
-        this.description = description;
-        this.item_id = item_id;
+    private interface id {
+        @NotNull
+        Long getId();
     }
 
-    public ReviewDTO() {
+    private interface mark {
+        @Min(value = 1, message = "Indalid mark")
+        @Max(value = 10, message = "Invalid mark")
+        Long getMark();
     }
 
-    public Integer getMark() {
-        return mark;
+    private interface description {
+        @Size(max = 250, message = "Description too big")
+        String getDescription();
+    }
+    private interface itemId {
+        @NotNull(message = "Item id must be written")
+        Long getItemId();
+    }
+    private interface userId {
+        @NotNull(message = "User id must be written")
+         Long getUserId();
+    }
+    public enum Request{;
+        @Value
+        public static class Create implements mark,description,itemId,userId{
+            Long mark;
+            String description;
+            Long itemId;
+            Long userId;
+        }
+        @Value
+        @NoArgsConstructor(force = true)
+        @AllArgsConstructor
+        public static class Id implements id {
+            Long id;
+        }
+
     }
 
-    public void setMark(Integer mark) {
-        this.mark = mark;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Long getItem_id() {
-        return item_id;
-    }
-
-    public void setItem_id(Long item_id) {
-        this.item_id = item_id;
-    }
-
-    public Long getUser_id() {
-        return user_id;
-    }
-
-    public void setUser_id(Long user_id) {
-        this.user_id = user_id;
-    }
 }

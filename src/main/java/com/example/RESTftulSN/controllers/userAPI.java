@@ -1,7 +1,6 @@
 package com.example.RESTftulSN.controllers;
 
-import com.example.RESTftulSN.DTO.UserDTO.UserDTO;
-import com.example.RESTftulSN.DTO.UserDTO.UsersDTOForRegister;
+import com.example.RESTftulSN.DTO.UserDTO;
 import com.example.RESTftulSN.services.UserService;
 import com.example.RESTftulSN.util.ErrorResponseEntity;
 import com.example.RESTftulSN.util.exceptions.ForbiddenAccessException;
@@ -12,10 +11,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/user")
@@ -30,7 +29,7 @@ public class userAPI {
     ///////////////////////
     ////Get all users
     ///////////////////////
-    @GetMapping
+    @GetMapping("/all")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> getAllUsers(){
         return userService.getAllUsersDTO();
@@ -38,33 +37,31 @@ public class userAPI {
     ///////////////////////
     ////Get user by id
     ///////////////////////
-    @GetMapping("{id}")
-    public ResponseEntity<?> getUserById(@PathVariable("id") Long id){
-        return userService.getUserById(id);
+    @GetMapping()
+    public ResponseEntity<?> getUserById(@RequestBody @Validated UserDTO.Request.Id userDTO){
+        return userService.getUserById(userDTO.getId());
     }
     ///////////////////////
     ////Register new user
     ///////////////////////
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody @Valid UsersDTOForRegister usersDTOForRegister, BindingResult bindingResult) {
-        return userService.registerUser(usersDTOForRegister,bindingResult);
+    public ResponseEntity<?> registerUser(@RequestBody @Valid UserDTO.Request.Register userDTO, BindingResult bindingResult) {
+        return userService.registerUser(userDTO,bindingResult);
     }
     ///////////////////////
     ////Delete user by id
     ///////////////////////
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable("id") Long id){
-        return userService.deleteById(id);
-
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteUser(@RequestBody @Validated UserDTO.Request.Id userDTO){
+        return userService.deleteById(userDTO.getId());
     }
     ///////////////////////
     ////Update user by id
     ///////////////////////
-    @PatchMapping("/update/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable("id") Long id,@RequestBody @Valid UserDTO userDTO,BindingResult bindingResult){
-
-        return userService.updateUserById(id,userDTO,bindingResult);
+    @PatchMapping("/update")
+    public ResponseEntity<?> updateUser(@RequestBody @Valid UserDTO.Request.Update userDTO,BindingResult bindingResult){
+        return userService.updateUserById(userDTO,bindingResult);
     }
 
     @ExceptionHandler

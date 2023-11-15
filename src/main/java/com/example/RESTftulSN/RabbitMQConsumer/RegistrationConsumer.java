@@ -30,8 +30,7 @@ public class RegistrationConsumer {
     @RabbitListener(queues = "RegistrationToken")
     public void sendRegistrationToken(Users user){
         String tokenGeneration = tokenGenerator.generateToken();
-        VerificationTokenDTO verificationTokenDTO = new VerificationTokenDTO(tokenGeneration
-                ,LocalDateTime.now().plusMinutes(5));
+        VerificationTokenDTO.Response.Create verificationTokenDTO =new VerificationTokenDTO.Response.Create(tokenGeneration,LocalDateTime.now().plusMinutes(5), user.getId());
         verificationTokenService.createToken(verificationTokenDTO,user);
         ////////////////////////////////////
         ///////SOME API FOR EMAIL SENDING

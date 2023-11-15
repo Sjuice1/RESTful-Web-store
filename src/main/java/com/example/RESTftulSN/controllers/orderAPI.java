@@ -1,6 +1,7 @@
 package com.example.RESTftulSN.controllers;
 
 
+import com.example.RESTftulSN.DTO.OrderDTO;
 import com.example.RESTftulSN.enums.Order.SHIPPING_STATUS;
 import com.example.RESTftulSN.services.OrderService;
 import com.example.RESTftulSN.util.ErrorResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -25,44 +27,43 @@ public class orderAPI{
     ///////////////////////
     ////Get order by id
     ///////////////////////
-    @GetMapping("/{id}")
+    @GetMapping("")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
-    public ResponseEntity<?> getOrder(@PathVariable("id") Long id){
-        return orderService.getOrderById(id);
+    public ResponseEntity<?> getOrder(@RequestBody @Validated OrderDTO.Request.Id orderDTO){
+        return orderService.getOrderById(orderDTO.getId());
     }
     ///////////////////////
     ////Get order items by order id
     ///////////////////////
-    @GetMapping("/{id}/items")
+    @GetMapping("items")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
-    public ResponseEntity<?> getOrderItems(@PathVariable("id") Long id){
-        return orderService.getOrderItems(id);
+    public ResponseEntity<?> getOrderItems(@RequestBody @Validated OrderDTO.Request.Id orderDTO){
+        return orderService.getOrderItems(orderDTO.getId());
     }
     ///////////////////////
     ////Make an order
     ////Vanish user cart and make order using all cart items
     ///////////////////////
-    @PostMapping("/make/{user_id}")
+    @PostMapping("/make")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
-    public ResponseEntity<?> makeAnOrder(@PathVariable("user_id") Long user_id){
-        return  orderService.orderACart(user_id);
+    public ResponseEntity<?> makeAnOrder(@RequestBody @Validated OrderDTO.Request.UserId orderDTO){
+        return  orderService.orderACart(orderDTO.getUserId());
     }
     ///////////////////////
     ////Update order status
     ///////////////////////
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR')")
-    @PatchMapping("{id}/status/{new_status}")
-    public ResponseEntity<?> changeStatus(@PathVariable("id")Long id
-            ,@PathVariable("new_status") String shippingStatus){
-        return orderService.changeStatus(id,SHIPPING_STATUS.findByName(shippingStatus));
+    @PatchMapping("/status")
+    public ResponseEntity<?> changeStatus(@RequestBody @Validated OrderDTO.Request.Status orderDTO){
+        return orderService.changeStatus(orderDTO.getId(),SHIPPING_STATUS.findByName(orderDTO.getStatus().toString()));
     }
     ///////////////////////
     ////Delete order by id(Not recommended to use)
     ///////////////////////
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteOrder(@PathVariable("id") Long id){
-        return orderService.deleteById(id);
+    public ResponseEntity<?> deleteOrder(@RequestBody @Validated OrderDTO.Request.Id orderDTO){
+        return orderService.deleteById(orderDTO.getId());
     }
 
     ///////////////////////////////////////////

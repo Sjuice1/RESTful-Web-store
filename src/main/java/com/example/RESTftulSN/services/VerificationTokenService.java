@@ -27,7 +27,7 @@ public class VerificationTokenService {
         this.modelMapper = modelMapper;
     }
     @Transactional
-    public void createToken(VerificationTokenDTO verificationTokenDTO, Users user){
+    public void createToken(VerificationTokenDTO.Response.Create verificationTokenDTO, Users user){
         VerificationToken verificationToken = dtoToModel(verificationTokenDTO,user);
         verificationTokenRepository.save(verificationToken);
     }
@@ -42,7 +42,7 @@ public class VerificationTokenService {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
     }
-    private VerificationToken dtoToModel(VerificationTokenDTO verificationTokenDTO,Users user) {
+    private VerificationToken dtoToModel(VerificationTokenDTO.Response.Create verificationTokenDTO, Users user) {
         VerificationToken verificationToken = modelMapper.map(verificationTokenDTO,VerificationToken.class);
         verificationToken.setUser(user);
         return verificationToken;

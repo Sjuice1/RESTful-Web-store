@@ -150,10 +150,8 @@ public class Item implements Serializable {
         this.itemCount = itemCount;
     }
 
-    public ItemDTO toDto() {
-        ModelMapper modelMapper = new ModelMapper();
-        ItemDTO itemDTO = modelMapper.map(this,ItemDTO.class);
-        itemDTO.setSellerId(seller.getId());
-        return itemDTO;
+    public ItemDTO.Request.Create toDto() {
+
+        return new ItemDTO.Request.Create(this.id,this.getName(),this.getDescription(),this.getPrice(),this.getStateOfItem(),this.getItemCount(),this.getImgSource(),this.seller.getId());
     }
 }

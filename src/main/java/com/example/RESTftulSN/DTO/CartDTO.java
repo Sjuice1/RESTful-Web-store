@@ -1,29 +1,31 @@
 package com.example.RESTftulSN.DTO;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Value;
 
 public class CartDTO {
-    @NotNull
-    private Long userId;
-    @NotNull
-    private Long itemId;
-
-    public CartDTO() {
+    private interface userId {
+        @NotNull
+        Long getUserId();
+    }
+    private interface itemId {
+        @NotNull
+        Long getItemId();
+    }
+    public enum Request{;
+        @Value
+        public static class Create implements userId,itemId{
+            Long userId;
+            Long itemId;
+        }
+        @Value
+        @NoArgsConstructor(force = true)
+        @AllArgsConstructor
+        public static class UserCart implements userId{
+            Long userId;
+        }
     }
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public Long getItemId() {
-        return itemId;
-    }
-
-    public void setItemId(Long itemId) {
-        this.itemId = itemId;
-    }
 }

@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -29,17 +30,17 @@ public class cartAPI {
     ///////////////////////
     ////Get user cart by user id
     ///////////////////////
-    @GetMapping("/{id}")
+    @GetMapping()
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
-    ResponseEntity<?>  cartOfUser(@PathVariable("id") Long id){
-        return userService.getCartOfUser(id);
+    ResponseEntity<?> cartOfUser(@RequestBody @Validated CartDTO.Request.UserCart cartDTO){
+        return userService.getCartOfUser(cartDTO.getUserId());
     }
     ///////////////////////
     ////Put new item in user cart
     ///////////////////////
     @PostMapping("/put")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
-    public ResponseEntity<?> putItemOnCart(@RequestBody @Valid CartDTO cartDTO,BindingResult bindingResult){
+    public ResponseEntity<?> putItemOnCart(@RequestBody @Valid CartDTO.Request.Create cartDTO,BindingResult bindingResult){
         return userService.addItemToCart(cartDTO,bindingResult);
 
     }
@@ -48,7 +49,7 @@ public class cartAPI {
     ///////////////////////
     @DeleteMapping("/remove")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
-    public ResponseEntity<?> removeItemFromCart(@RequestBody @Valid CartDTO cartDTO,BindingResult bindingResult){
+    public ResponseEntity<?> removeItemFromCart(@RequestBody @Valid CartDTO.Request.Create cartDTO,BindingResult bindingResult){
         return userService.removeItemFromCart(cartDTO,bindingResult);
 
     }

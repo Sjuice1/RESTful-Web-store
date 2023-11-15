@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -27,9 +28,9 @@ public class reviewAPI {
     ///////////////////////
     ////Get review by id
     ///////////////////////
-    @GetMapping("{id}")
-    public ResponseEntity<?> getReview(@PathVariable("id") Long id){
-        return reviewService.getReviewById(id);
+    @GetMapping()
+    public ResponseEntity<?> getReview(@RequestBody @Validated ReviewDTO.Request.Id reviewDTO){
+        return reviewService.getReviewById(reviewDTO.getId());
     }
     ///////////////////////
     ////Leave review for item
@@ -37,7 +38,7 @@ public class reviewAPI {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
     @PostMapping("/leave")
-    public ResponseEntity<?> addReviewToItem(@RequestBody @Valid ReviewDTO reviewDTO
+    public ResponseEntity<?> addReviewToItem(@RequestBody @Valid ReviewDTO.Request.Create reviewDTO
             ,BindingResult bindingResult){
         return reviewService.addReview(reviewDTO,bindingResult);
     }
@@ -45,9 +46,9 @@ public class reviewAPI {
     ////Delete review by id
     ///////////////////////
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteReview(@PathVariable("id") Long id){
-        return reviewService.delete(id);
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteReview(@RequestBody ReviewDTO.Request.Id reviewDTO){
+        return reviewService.delete(reviewDTO.getId());
     }
 
     ///////////////////////

@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -34,40 +35,40 @@ public class itemAPI {
     ////Get item by id
     ///////////////////////
     @GetMapping("{id}")
-    public ResponseEntity<?> getItem(@PathVariable("id") Long id){
-        return itemService.getItem(id);
+    public ResponseEntity<?> getItem(@RequestBody @Validated ItemDTO.Request.Id itemDTO){
+        return itemService.getItem(itemDTO.getId());
     }
     ///////////////////////
     ////Get item reviews by item id
     ///////////////////////
-    @GetMapping("{id}/reviews")
-    public ResponseEntity<?> getItemReviews(@PathVariable("id") Long id){
-        return itemService.getItemReviews(id);
+    @GetMapping("/reviews")
+    public ResponseEntity<?> getItemReviews(@RequestBody @Validated ItemDTO.Request.Id itemDTO){
+        return itemService.getItemReviews(itemDTO.getId());
     }
     ///////////////////////
     ////Add new item using JSON like ItemDTO
     ///////////////////////
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
     @PostMapping("/add")
-    public ResponseEntity<?> addItem(@RequestBody @Valid ItemDTO itemDTO
+    public ResponseEntity<?> addItem(@RequestBody @Valid ItemDTO.Request.Create itemDTO
             ,BindingResult bindingResult){
         return itemService.addItem(itemDTO,bindingResult);
     }
     ///////////////////////
     ////Delete item by id
     ///////////////////////
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/delete")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
-    public ResponseEntity<?> deleteItem(@PathVariable("id") Long id){
-       return itemService.deleteItem(id);
+    public ResponseEntity<?> deleteItem(@RequestBody @Validated ItemDTO.Request.Id itemDTO){
+       return itemService.deleteItem(itemDTO.getId());
     }
     ///////////////////////
     ////Update item by id
     ///////////////////////
-    @PatchMapping("/update/{id}")
+    @PatchMapping("/update")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_VERIFIED')")
-    public ResponseEntity<?> updateItem(@PathVariable("id") Long id,@RequestBody @Valid ItemDTO itemDTO,BindingResult bindingResult){
-        return itemService.updateItemById(id,itemDTO,bindingResult);
+    public ResponseEntity<?> updateItem(@RequestBody @Valid ItemDTO.Request.Create itemDTO,BindingResult bindingResult){
+        return itemService.updateItemById(itemDTO,bindingResult);
     }
 
     @ExceptionHandler

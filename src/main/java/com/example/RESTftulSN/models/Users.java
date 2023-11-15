@@ -1,9 +1,8 @@
 package com.example.RESTftulSN.models;
 
-import com.example.RESTftulSN.DTO.UserDTO.UserDTO;
+import com.example.RESTftulSN.DTO.UserDTO;
 import com.example.RESTftulSN.enums.User.USER_ROLE;
 import jakarta.persistence.*;
-import org.modelmapper.ModelMapper;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -126,8 +125,9 @@ public class Users implements Serializable {
         this.cart = cart;
     }
 
-    public UserDTO toDto(){
-        return new ModelMapper().map(this,UserDTO.class);
+    public UserDTO.Response.Create toDto(){
+      return new UserDTO.Response.Create(this.getUsername(),this.getPassword(),this.getEmail());
+
     }
 
     public List<Order> getOrders() {

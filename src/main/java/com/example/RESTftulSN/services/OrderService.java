@@ -75,7 +75,7 @@ public class OrderService {
 
     public ResponseEntity<?> getOrderItems(Long id) {
         Order order = getById(id);
-        List<ItemDTO> items= order.getItems().stream().map(Item::toDto).toList();
+        List<ItemDTO.Request.Create> items= order.getItems().stream().map(Item::toDto).toList();
         return new ResponseEntity<>(items,HttpStatus.OK);
     }
 }

@@ -7,6 +7,7 @@ import com.example.RESTftulSN.models.Users;
 import com.example.RESTftulSN.repositories.ReviewRepository;
 import com.example.RESTftulSN.security.BindingResultErrorCheck;
 import com.example.RESTftulSN.util.exceptions.InvalidDataException;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,7 +38,7 @@ public class ReviewService {
     }
 
     @Transactional
-    public ResponseEntity<?> addReview(ReviewDTO reviewDTO, BindingResult bindingResult) {
+    public ResponseEntity<?> addReview(ReviewDTO.Request.@Valid Create reviewDTO, BindingResult bindingResult) {
         bindingResultErrorCheck.check(bindingResult);
         Review review = dtoToModel(reviewDTO);
         reviewRepository.save(review);
@@ -63,10 +64,12 @@ public class ReviewService {
         Review review = getById(id);
         return new ResponseEntity<>(review.toDto(),HttpStatus.OK);
     }
-    private Review dtoToModel(ReviewDTO reviewDTO) {
-        Users user = userService.getById(reviewDTO.getUser_id());
-        Item item = itemService.getById(reviewDTO.getItem_id());
-        Review review = modelMapper.map(reviewDTO,Review.class);
+    private Review dtoToModel(ReviewDTO.Request.Create reviewDTO) {
+        Users user = userService.getById(reviewDTO.getUserId());
+        Item item = itemService.getById(reviewDTO.getItemId());
+        Review review = new Review();
+        review.setMark(reviewDTO.getMark());
+        review.setDescription(reviewDTO.getDescription());
         review.setItem(item);
         review.setCreation_date(LocalDateTime.now());
         review.setUser(user);

@@ -1,7 +1,6 @@
 package com.example.RESTftulSN.controllers;
 
-import com.example.RESTftulSN.DTO.ItemDTO;
-import com.example.RESTftulSN.DTO.UserDTO.UserDTO;
+import com.example.RESTftulSN.DTO.*;
 import com.example.RESTftulSN.repositories.ItemRepository;
 import com.example.RESTftulSN.repositories.UsersRepository;
 import com.example.RESTftulSN.util.exceptions.InvalidDataException;
@@ -9,12 +8,12 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 
 import java.util.List;
 
@@ -76,26 +75,26 @@ public class APITest{
             @DisplayName("Admin can delete user")
             @WithMockUser(authorities = "ROLE_ADMIN")
             public void canDeleteADMIN(){
-                assertThrows(InvalidDataException.class,() -> userAPITest.deleteUser(500000004312L ));
+                assertThrows(NullPointerException.class,() -> userAPITest.deleteUser(null));
             }
 
             @Test
             @DisplayName("Guest can't delete user")
             @WithMockUser(authorities = "ROLE_GUEST")
             public void canDeleteGuest(){
-                assertThrows(AccessDeniedException.class,() -> userAPITest.deleteUser(1L));
+                assertThrows(AccessDeniedException.class,() -> userAPITest.deleteUser(null));
             }
             @Test
             @DisplayName("Verified can't delete user")
             @WithMockUser(authorities = "ROLE_VERIFIED")
             public void canDeleteVerified(){
-                assertThrows(AccessDeniedException.class,() -> userAPITest.deleteUser(1L));
+                assertThrows(AccessDeniedException.class,() -> userAPITest.deleteUser(null));
             }
             @Test
             @DisplayName("Moderator can't delete user")
             @WithMockUser(authorities = "ROLE_MODERATOR")
             public void canDeleteModerator(){
-                assertThrows(AccessDeniedException.class,() -> userAPITest.deleteUser(1L));
+                assertThrows(AccessDeniedException.class,() -> userAPITest.deleteUser(null));
             }
         }
         @Test
@@ -109,14 +108,14 @@ public class APITest{
         @Test
         @DisplayName("Get user by id with invalid id")
         public void invalidIdTest(){
-            Assertions.assertThrows(InvalidDataException.class,()->userAPITest.getUserById(50000000321L));
+            Assertions.assertThrows(InvalidDataException.class,()->userAPITest.getUserById(new UserDTO.Request.Id(50000000321L)));
         }
 
         @Test
         @DisplayName("Get user by id with working id")
         public void workingIdTest(){
             try {
-                userAPITest.getUserById(15L);
+                userAPITest.getUserById(new UserDTO.Request.Id(28L));
                 assertTrue(true);
             }
             catch (InvalidDataException invalidDataException){
@@ -128,7 +127,7 @@ public class APITest{
         @DisplayName("Delete user by id with invalid id")
         @WithMockUser(username = "user",authorities = "ROLE_ADMIN")
         public void deleteInvalidIdTest(){
-            Assertions.assertThrows(InvalidDataException.class,()->userAPITest.deleteUser(50000000321L));
+            assertThrows(NullPointerException.class,() -> userAPITest.deleteUser(null));
         }
 
 
@@ -181,26 +180,26 @@ public class APITest{
             @DisplayName("Admin can update item")
             @WithMockUser(authorities = "ROLE_ADMIN")
             public void canUpdateADMIN(){
-                assertThrows(NullPointerException.class,() -> itemAPITest.updateItem(null,null,null ));
+                assertThrows(NullPointerException.class,() -> itemAPITest.updateItem(null,null ));
             }
 
             @Test
             @DisplayName("Guest can't update item")
             @WithMockUser(authorities = "ROLE_GUEST")
             public void canUpdateGuest(){
-                assertThrows(AccessDeniedException.class,() -> itemAPITest.updateItem(null,null,null ));
+                assertThrows(AccessDeniedException.class,() -> itemAPITest.updateItem(null,null ));
             }
             @Test
             @DisplayName("Verified can update item")
             @WithMockUser(authorities = "ROLE_VERIFIED")
             public void canUpdateVerified(){
-                assertThrows(NullPointerException.class,() -> itemAPITest.updateItem(null,null,null ));
+                assertThrows(NullPointerException.class,() -> itemAPITest.updateItem(null,null ));
             }
             @Test
             @DisplayName("Moderator can update item")
             @WithMockUser(authorities = "ROLE_MODERATOR")
             public void canUpdateModerator(){
-                assertThrows(NullPointerException.class,() -> itemAPITest.updateItem(null,null,null ));
+                assertThrows(NullPointerException.class,() -> itemAPITest.updateItem(null,null ));
             }
         }
         @Nested
@@ -210,7 +209,7 @@ public class APITest{
             @DisplayName("Admin can delete item")
             @WithMockUser(authorities = "ROLE_ADMIN")
             public void canDeleteADMIN(){
-                assertThrows(InvalidDataAccessApiUsageException.class,() -> itemAPITest.deleteItem(null ));
+                assertThrows(NullPointerException.class,() -> itemAPITest.deleteItem(null ));
             }
 
             @Test
@@ -223,13 +222,13 @@ public class APITest{
             @DisplayName("Verified can delete item")
             @WithMockUser(authorities = "ROLE_VERIFIED")
             public void canDeleteVerified(){
-                assertThrows(InvalidDataAccessApiUsageException.class,() -> itemAPITest.deleteItem(null));
+                assertThrows(NullPointerException.class,() -> itemAPITest.deleteItem(null));
             }
             @Test
             @DisplayName("Moderator can delete item")
             @WithMockUser(authorities = "ROLE_MODERATOR")
             public void canDeleteModerator(){
-                assertThrows(InvalidDataAccessApiUsageException.class,() -> itemAPITest.deleteItem(null));
+                assertThrows(NullPointerException.class,() -> itemAPITest.deleteItem(null));
             }
         }
 
@@ -243,14 +242,14 @@ public class APITest{
         @Test
         @DisplayName("Get item by id with invalid id")
         public void invalidIdTest(){
-            Assertions.assertThrows(InvalidDataException.class,()->itemAPITest.getItem(50000000321L));
+            Assertions.assertThrows(InvalidDataException.class,()->itemAPITest.getItem(new ItemDTO.Request.Id(50000000321L)));
         }
 
         @Test
         @DisplayName("Get item by id with working id")
         public void workingIdTest(){
             try {
-                itemAPITest.getItem(5L);
+                itemAPITest.getItem(new ItemDTO.Request.Id(5L));
                 assertTrue(true);
             }
             catch (InvalidDataException invalidDataException){
@@ -260,7 +259,7 @@ public class APITest{
         @Test
         @DisplayName("Get item reviews by id with invalid id")
         public void invalidIdReviewTest(){
-            Assertions.assertThrows(InvalidDataException.class,()->itemAPITest.getItemReviews(50000000321L));
+            Assertions.assertThrows(InvalidDataException.class,()->itemAPITest.getItemReviews(new ItemDTO.Request.Id(50000000321L)));
         }
 
         @Test
@@ -268,7 +267,7 @@ public class APITest{
         @DisplayName("Get item reviews by id with working id")
         public void workingIdReviewTest(){
             try {
-                itemAPITest.getItemReviews(5L);
+                itemAPITest.getItemReviews(new ItemDTO.Request.Id(5L));
                 assertTrue(true);
             }
             catch (InvalidDataException invalidDataException){
@@ -323,7 +322,7 @@ public class APITest{
             @DisplayName("Admin can delete review")
             @WithMockUser(authorities = "ROLE_ADMIN")
             public void canDeleteADMIN(){
-                assertThrows(InvalidDataAccessApiUsageException.class,() -> reviewAPITest.deleteReview(null));
+                assertThrows(NullPointerException.class,() -> reviewAPITest.deleteReview(null));
             }
 
             @Test
@@ -336,27 +335,27 @@ public class APITest{
             @DisplayName("Verified can delete review")
             @WithMockUser(authorities = "ROLE_VERIFIED")
             public void canDeleteVerified(){
-                assertThrows(InvalidDataAccessApiUsageException.class,() -> reviewAPITest.deleteReview(null));
+                assertThrows(NullPointerException.class,() -> reviewAPITest.deleteReview(null));
             }
             @Test
             @DisplayName("Moderator can delete review")
             @WithMockUser(authorities = "ROLE_MODERATOR")
             public void canDeleteModerator(){
-                assertThrows(InvalidDataAccessApiUsageException.class,() -> reviewAPITest.deleteReview(null));
+                assertThrows(NullPointerException.class,() -> reviewAPITest.deleteReview(null));
             }
         }
 
         @Test
         @DisplayName("Get review by id with invalid id")
         public void invalidIdTest(){
-            Assertions.assertThrows(InvalidDataException.class,()->reviewAPITest.getReview(5000004210L));
+            Assertions.assertThrows(InvalidDataException.class,()->reviewAPITest.getReview(new ReviewDTO.Request.Id(50000000L)));
         }
 
         @Test
         @DisplayName("Get review by id with working id")
         public void workingIdTest(){
             try {
-                reviewAPITest.getReview(1L);
+                reviewAPITest.getReview(new ReviewDTO.Request.Id(1L));
                 assertTrue(true);
             }
             catch (InvalidDataException invalidDataException){
@@ -375,7 +374,7 @@ public class APITest{
             @DisplayName("Admin can check cart")
             @WithMockUser(authorities = "ROLE_ADMIN")
             public void canCheckADMIN(){
-                assertThrows(InvalidDataAccessApiUsageException.class,() -> cartAPITest.cartOfUser(null));
+                assertThrows(NullPointerException.class,() -> cartAPITest.cartOfUser(null));
             }
 
             @Test
@@ -388,13 +387,13 @@ public class APITest{
             @DisplayName("Verified can check cart")
             @WithMockUser(authorities = "ROLE_VERIFIED")
             public void canCheckVerified(){
-                assertThrows(InvalidDataAccessApiUsageException.class,() -> cartAPITest.cartOfUser(null));
+                assertThrows(NullPointerException.class,() -> cartAPITest.cartOfUser(null));
             }
             @Test
             @DisplayName("Moderator can check cart")
             @WithMockUser(authorities = "ROLE_MODERATOR")
             public void canCheckModerator(){
-                assertThrows(InvalidDataAccessApiUsageException.class,() -> cartAPITest.cartOfUser(null));
+                assertThrows(NullPointerException.class,() -> cartAPITest.cartOfUser(null));
             }
         }
         @Nested
@@ -474,7 +473,7 @@ public class APITest{
         @WithMockUser(authorities = "ROLE_ADMIN")
         @DisplayName("Get order by id with invalid id")
         public void invalidIdTest(){
-            Assertions.assertThrows(InvalidDataException.class,()->orderAPITest.getOrder(50000000321L));
+            Assertions.assertThrows(InvalidDataException.class,()->orderAPITest.getOrder(new OrderDTO.Request.Id(50000000321L)));
         }
         @Nested
         @DisplayName("Order access")
@@ -483,7 +482,7 @@ public class APITest{
             @DisplayName("Admin can check order")
             @WithMockUser(authorities = "ROLE_ADMIN")
             public void canCheckADMIN(){
-                assertThrows(InvalidDataAccessApiUsageException.class,() -> orderAPITest.getOrderItems(null));
+                assertThrows(NullPointerException.class,() -> orderAPITest.getOrderItems(null));
             }
 
             @Test
@@ -496,13 +495,13 @@ public class APITest{
             @DisplayName("Verified can check order")
             @WithMockUser(authorities = "ROLE_VERIFIED")
             public void canCheckVerified(){
-                assertThrows(InvalidDataAccessApiUsageException.class,() -> orderAPITest.getOrderItems(null));
+                assertThrows(NullPointerException.class,() -> orderAPITest.getOrderItems(null));
             }
             @Test
             @DisplayName("Moderator can check order")
             @WithMockUser(authorities = "ROLE_MODERATOR")
             public void canCheckModerator(){
-                assertThrows(InvalidDataAccessApiUsageException.class,() -> orderAPITest.getOrderItems(null));
+                assertThrows(NullPointerException.class,() -> orderAPITest.getOrderItems(null));
             }
         }
         @Nested
@@ -512,26 +511,26 @@ public class APITest{
             @DisplayName("Admin can change status")
             @WithMockUser(authorities = "ROLE_ADMIN")
             public void canChangeADMIN(){
-                assertThrows(InvalidDataException.class,() -> orderAPITest.changeStatus(null,null));
+                assertThrows(NullPointerException.class,() -> orderAPITest.changeStatus(null));
             }
 
             @Test
             @DisplayName("Guest can't change status")
             @WithMockUser(authorities = "ROLE_GUEST")
             public void canChangeGuest(){
-                assertThrows(AccessDeniedException.class,() -> orderAPITest.changeStatus(null,null));
+                assertThrows(AccessDeniedException.class,() -> orderAPITest.changeStatus(null));
             }
             @Test
             @DisplayName("Verified can't change status")
             @WithMockUser(authorities = "ROLE_VERIFIED")
             public void canChangeVerified(){
-                assertThrows(AccessDeniedException.class,() -> orderAPITest.changeStatus(null,null));
+                assertThrows(AccessDeniedException.class,() -> orderAPITest.changeStatus(null));
             }
             @Test
             @DisplayName("Moderator can change status")
             @WithMockUser(authorities = "ROLE_MODERATOR")
             public void canChangeModerator(){
-                assertThrows(InvalidDataException.class,() -> orderAPITest.changeStatus(null,null));
+                assertThrows(NullPointerException.class,() -> orderAPITest.changeStatus(null));
             }
         }
         @Nested
@@ -541,7 +540,7 @@ public class APITest{
             @DisplayName("Admin can make an order")
             @WithMockUser(authorities = "ROLE_ADMIN")
             public void canMakeADMIN(){
-                assertThrows(InvalidDataAccessApiUsageException.class,() ->orderAPITest.makeAnOrder(null));
+                assertThrows(NullPointerException.class,() ->orderAPITest.makeAnOrder(null));
             }
 
             @Test
@@ -554,13 +553,13 @@ public class APITest{
             @DisplayName("Verified can make an order")
             @WithMockUser(authorities = "ROLE_VERIFIED")
             public void canMakeVerified(){
-                assertThrows(InvalidDataAccessApiUsageException.class,() ->orderAPITest.makeAnOrder(null));
+                assertThrows(NullPointerException.class,() ->orderAPITest.makeAnOrder(null));
             }
             @Test
             @DisplayName("Moderator can make an order")
             @WithMockUser(authorities = "ROLE_MODERATOR")
             public void canMakeModerator(){
-                assertThrows(InvalidDataAccessApiUsageException.class,() ->orderAPITest.makeAnOrder(null));
+                assertThrows(NullPointerException.class,() ->orderAPITest.makeAnOrder(null));
             }
         }
         @Nested
@@ -570,7 +569,7 @@ public class APITest{
             @DisplayName("Admin can check orders items")
             @WithMockUser(authorities = "ROLE_ADMIN")
             public void canCheckADMIN(){
-                assertThrows(InvalidDataAccessApiUsageException.class,() ->orderAPITest.getOrderItems(null));
+                assertThrows(NullPointerException.class,() ->orderAPITest.getOrderItems(null));
             }
 
             @Test
@@ -583,13 +582,13 @@ public class APITest{
             @DisplayName("Verified can check orders items")
             @WithMockUser(authorities = "ROLE_VERIFIED")
             public void canCheckVerified(){
-                assertThrows(InvalidDataAccessApiUsageException.class,() ->orderAPITest.getOrderItems(null));
+                assertThrows(NullPointerException.class,() ->orderAPITest.getOrderItems(null));
             }
             @Test
             @DisplayName("Moderator can check orders items")
             @WithMockUser(authorities = "ROLE_MODERATOR")
             public void canCheckModerator(){
-                assertThrows(InvalidDataAccessApiUsageException.class,() ->orderAPITest.getOrderItems(null));
+                assertThrows(NullPointerException.class,() ->orderAPITest.getOrderItems(null));
             }
         }
         @Nested
@@ -599,7 +598,7 @@ public class APITest{
             @DisplayName("Admin can delete order")
             @WithMockUser(authorities = "ROLE_ADMIN")
             public void canRemoveADMIN(){
-                assertThrows(InvalidDataAccessApiUsageException.class,() -> orderAPITest.deleteOrder(null));
+                assertThrows(NullPointerException.class,() -> orderAPITest.deleteOrder(null));
             }
 
             @Test
@@ -628,7 +627,7 @@ public class APITest{
         @DisplayName("Get order by id with working id")
         public void workingIdTest(){
             try {
-                orderAPITest.getOrder(2L);
+                orderAPITest.getOrder(new OrderDTO.Request.Id(2L));
                 assertTrue(true);
             }
             catch (InvalidDataException invalidDataException){
@@ -652,32 +651,32 @@ public class APITest{
             @DisplayName("Admin can't generate new toker")
             @WithMockUser(authorities = "ROLE_ADMIN")
             public void canGenerateADMIN(){
-                assertThrows(AccessDeniedException.class,() -> authAPITest.generateNewToken(500000030L));
+                assertThrows(AccessDeniedException.class,() -> authAPITest.generateNewToken(new VerificationTokenDTO.Request.Id(500000030L)));
             }
 
             @Test
             @DisplayName("Guest can generate new toker")
             @WithMockUser(authorities = "ROLE_GUEST")
             public void canGenerateGuest(){
-                assertThrows(InvalidDataException.class,() -> authAPITest.generateNewToken(500000030L));
+                assertThrows(InvalidDataException.class,() -> authAPITest.generateNewToken(new VerificationTokenDTO.Request.Id(500000030L)));
             }
             @Test
             @DisplayName("Verified can't generate new toker")
             @WithMockUser(authorities = "ROLE_VERIFIED")
             public void canGenerateVerified(){
-                assertThrows(AccessDeniedException.class,() -> authAPITest.generateNewToken(500000030L));
+                assertThrows(AccessDeniedException.class,() -> authAPITest.generateNewToken(new VerificationTokenDTO.Request.Id(500000030L)));
             }
             @Test
             @DisplayName("Moderator can't generate new toker")
             @WithMockUser(authorities = "ROLE_MODERATOR")
             public void AccessDeniedException(){
-                assertThrows(AccessDeniedException.class,() -> authAPITest.generateNewToken(500000030L));
+                assertThrows(AccessDeniedException.class,() -> authAPITest.generateNewToken(new VerificationTokenDTO.Request.Id(500000030L)));
             }
         }
         @Test
         @DisplayName("Get invalid token")
         public void invalidIdTest(){
-            ResponseEntity<?> status = authAPITest.authenticateUser("fsa");
+            ResponseEntity<?> status = authAPITest.authenticateUser(new VerificationTokenDTO.Request.Token("fsa"));
             assertThat(status.getStatusCode().equals(HttpStatus.NOT_FOUND));
         }
     }

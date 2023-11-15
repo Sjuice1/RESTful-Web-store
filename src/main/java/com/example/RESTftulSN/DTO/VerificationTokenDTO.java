@@ -1,41 +1,49 @@
 package com.example.RESTftulSN.DTO;
 
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Value;
+
 import java.time.LocalDateTime;
 
 public class VerificationTokenDTO {
-    private String token;
-    private LocalDateTime expirationTime;
-    private Long user_id;
-
-    public VerificationTokenDTO(String token, LocalDateTime expirationTime) {
-        this.token = token;
-        this.expirationTime = expirationTime;
+    private interface id {
+        @NotNull
+        Long getId();
     }
 
-    public VerificationTokenDTO() {
+    private  interface token {
+         String getToken();
+    }
+    private interface expirationTime {
+        LocalDateTime getExpirationTime();
+    }
+    private interface userId {
+        Long getUserId();
+    }
+    public enum Request{;
+        @Value
+        @NoArgsConstructor(force = true)
+        @AllArgsConstructor
+        public static class Id implements id {
+            Long id;
+        }
+        @Value
+        @NoArgsConstructor(force = true)
+        @AllArgsConstructor
+        public static class Token implements token {
+            String token;
+        }
     }
 
-    public String getToken() {
-        return token;
+    public enum Response{;
+        @Value
+        public static class Create implements token,expirationTime,userId{
+            String token;
+            LocalDateTime expirationTime;
+            Long userId;
+        }
     }
 
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public LocalDateTime getExpirationTime() {
-        return expirationTime;
-    }
-
-    public void setExpirationTime(LocalDateTime expirationTime) {
-        this.expirationTime = expirationTime;
-    }
-
-    public Long getUser_id() {
-        return user_id;
-    }
-
-    public void setUser_id(Long user_id) {
-        this.user_id = user_id;
-    }
 }

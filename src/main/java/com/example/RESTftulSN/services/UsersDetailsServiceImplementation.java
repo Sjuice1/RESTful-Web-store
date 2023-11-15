@@ -25,6 +25,7 @@ public class UsersDetailsServiceImplementation implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        System.out.println(username);
         Optional<Users> users = usersRepository.findByUsername(username);
         if(users.isEmpty()){
             throw new InvalidDataException("Invalid username / password");

@@ -26,10 +26,10 @@ public class SecurityCFG {
 
     @Bean
     public SecurityFilterChain webFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.authorizeHttpRequests(authorize->authorize.
+        return httpSecurity.csrf(csrf->csrf.disable()).authorizeHttpRequests(authorize->authorize.
                         requestMatchers("/api/auth/generate/{id}")
                 .hasRole("GUEST")
-                .requestMatchers("/api/user","/api/user/delete/{id}","/api/order/delete/{id}","/")
+                .requestMatchers("/api/user","/api/order/delete/{id}","/")
                 .hasRole("ADMIN")
                 .requestMatchers("/api/order/{id}/status/{new_status}")
                 .hasAnyRole("ADMIN","MODERATOR")
