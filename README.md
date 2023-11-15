@@ -56,6 +56,71 @@ like put items on cart create new post's or make an order.
 ****Moderator****: Can do everything that guest and verified and little more, like update items and profiles of other users.
 
 ****Admin****: Can perform all functionalities provided by the API.
+## Testing
+To ensure that project works right you can check the ***test/apiTEST*** folder and test product by many different ways.
+![gif](https://github.com/Sjuice1/RESTful-Web-store/blob/main/Untitled.gif)
+## JSON Structures
+
+### UsersDTOForRegister
+
+```json
+{
+  "username": "",
+  "password": "",
+  "repeatPassword": "",
+  "email": ""
+}
+```
+### UserDTO
+
+```json
+{
+  "username": "",
+  "password": "",
+  "email": ""
+}
+```
+### CartDTO
+
+```json
+{
+  "userId": "",
+  "itemId": "",
+}
+```
+### ItemDTO
+
+```json
+{
+  "name": "",
+  "description": "",
+  "price": "",
+  "stateOfItem": "",
+  "itemCount": "",
+  "imgSource": "",
+  "sellerId": ""
+}
+```
+### ReviewDTO
+
+```json
+{
+  "mark": "",
+  "description": "",
+  "item_id": "",
+  "user_id": ""
+}
+```
+****DTO THAT YOU CAN'T CHANGE BUT CAN GET****
+### OrderDTO
+```json
+{
+  "id": "",
+  "orderDate": "",
+  "status": "",
+  "user_id": ""
+}
+```
 ## Contacts
 [Telegram](https://t.me/primeking666)
 
